@@ -109,5 +109,10 @@ namespace Main
                 StaticPartTransform.position = raycastWorldPos + raycastWorldDir * (carSuspension.SpringLength - Radius);
             }
         }
+
+        public void ApplyExternalTorque(float torque)
+        {
+            AngularVelocity += torque * Time.deltaTime / AngularInertia;
+        }
     }
 }

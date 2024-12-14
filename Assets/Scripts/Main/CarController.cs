@@ -84,6 +84,18 @@ namespace Main
             _carEngine.ApplyExternalTorque(engineResultTorque);
 
             UpdateAllWheels(torquePerPoweredWheel);
+
+            //powered wheels velocity difference limiter
+            if (_carTransmission.PoweredWheelsVelocityDifferenceLimiter!=0)
+            {
+                for(int i=0; i<_carWheels.Length; i++)
+                {
+                    if (_carWheels[i].IsPowered)
+                    {
+                        _carWheels[i].ApplyExternalTorque((poweredWheelsVelocityAvg - _carWheels[i].AngularVelocity) * _carTransmission.PoweredWheelsVelocityDifferenceLimiter);
+                    }
+                }
+            }
         }
 
         private void SetupAllSuspensions()

@@ -32,7 +32,9 @@ namespace Main
         private float _resultFrictionTorqueChange = 0;
         private float _resultFrictionTorqueChangeLast = 0;
 
-        public void Setup()
+        [field: SerializeField] public float PoweredWheelsVelocityDifferenceLimiter { get; private set; } = 1f; 
+
+    public void Setup()
         {
             _forwardGearRatiosInverse = new float[_forwardGearRatios.Length];
             for (int i = 0, c = _forwardGearRatiosInverse.Length; i < c; i++)
