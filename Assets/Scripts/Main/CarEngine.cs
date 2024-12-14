@@ -40,7 +40,8 @@ namespace Main
         {
             float angularVelocityRpm = GetRpm();
             
-            return Mathf.Lerp(-_brakingCurve.Evaluate(Mathf.Abs(angularVelocityRpm)), _torqueCurve.Evaluate(angularVelocityRpm),
+            return Mathf.Lerp(-_brakingCurve.Evaluate(Mathf.Abs(angularVelocityRpm)) * Mathf.Sign(angularVelocityRpm),
+                _torqueCurve.Evaluate(angularVelocityRpm),
                 throttlePositionNormalized);
         }
 
@@ -78,6 +79,7 @@ namespace Main
                 if (rpm < _stallRpm)
                 {
                     _isRunning = false;
+                    OnEngineStopped?.Invoke();
                 }
             }
             else

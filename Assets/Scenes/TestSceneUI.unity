@@ -400,6 +400,15 @@ MonoBehaviour:
       - serializedVersion: 3
         time: 7000
         value: 40
+        inSlope: -0.07992008
+        outSlope: -0.07992008
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 7001
+        value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -432,12 +441,12 @@ MonoBehaviour:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 7000
-        value: 30
-        inSlope: 0.0036107108
-        outSlope: 0.0036107108
+        value: 80
+        inSlope: 0.010365273
+        outSlope: 0.010365273
         tangentMode: 0
         weightedMode: 0
-        inWeight: 0.048816476
+        inWeight: 0.06819048
         outWeight: 0.33333334
       m_PreInfinity: 2
       m_PostInfinity: 2
@@ -465,6 +474,7 @@ MonoBehaviour:
     _finalGearRatio: 3.941
     _clutchMaxTorque: 100
     _clutchTorqueSlipMultiplier: 0.13
+    <PoweredWheelsVelocityDifferenceLimiter>k__BackingField: 15
   _carSuspensions:
   - <SpringRate>k__BackingField: 50000
     <SpringDamping>k__BackingField: 5000
