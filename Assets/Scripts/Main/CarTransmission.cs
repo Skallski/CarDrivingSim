@@ -5,6 +5,10 @@ namespace Main
     [System.Serializable]
     public class CarTransmission
     {
+        [Header("Settings")]
+        [SerializeField] private bool _isAutomaticClutch;
+        [SerializeField] private float _automaticClutchMinAngularVelocity;
+        [SerializeField] private float _automaticClutchMaxAngularVelocity;
         // gears go like this:
         // -1 : reverse, 0 : neutral, 1 : first, ect.
         [field: SerializeField] public int CurrentGear { get; set; }
@@ -22,22 +26,27 @@ namespace Main
         private float _reverseGearRatioInverse;
         private float _finalGearRatioInverse;
 
+        private float _clutchInputAfterUpdate;
+
+        private float _resultFrictionTorqueLast = 0;
+        private float _resultFrictionTorqueChange = 0;
+        private float _resultFrictionTorqueChangeLast = 0;
+
         public void Setup()
         {
             _forwardGearRatiosInverse = new float[_forwardGearRatios.Length];
             for (int i = 0, c = _forwardGearRatiosInverse.Length; i < c; i++)
             {
-                _forwardGearRatiosInverse[i] = 1f - _forwardGearRatios[i];
+                _forwardGearRatiosInverse[i] = 1f / _forwardGearRatios[i];
             }
 
-            _reverseGearRatioInverse = 1f - _reverseGearRatio;
-            _finalGearRatioInverse = 1f - _finalGearRatio;
+            _reverseGearRatioInverse = 1f / _reverseGearRatio;
+            _finalGearRatioInverse = 1f / _finalGearRatio;
         }
 
         private float GetGearRatio(int gear)
         {
-            gear = Mathf.Clamp(gear, -1, _forwardGearRatios.Length);
-            Debug.Log(gear);
+            gear = Mathf.Clamp(gear, -1, _forwardGearRatios.Length);          
 
             return gear switch
             {
@@ -50,7 +59,6 @@ namespace Main
         private float GetGearRatioInverse(int gear)
         {
             gear = Mathf.Clamp(gear, -1, _forwardGearRatiosInverse.Length);
-            Debug.Log(gear);
 
             return gear switch
             {
@@ -60,10 +68,47 @@ namespace Main
             };
         }
 
+        public void SetGear(int gear)
+        {
+            if (_isAutomaticClutch == false)
+            {
+                if (_clutchInputAfterUpdate > 0.9f)
+                {
+                    CurrentGear = Mathf.Clamp(gear, -1, _forwardGearRatiosInverse.Length);
+                }
+                else
+                {
+                    Debug.LogWarning("Uwaga! Zmielisz synchrosy!");
+                }
+            }
+            else
+            {
+                CurrentGear = Mathf.Clamp(gear, -1, _forwardGearRatiosInverse.Length);
+            }
+        }
+
         public (float engineResultTorque, float wheelsResultTorque) Update(float clutchInput, float engineAngularVelocity, 
             float wheelsAngularVelocityAvg)
         {
-            clutchInput = Mathf.Clamp01(clutchInput);
+            _clutchInputAfterUpdate = clutchInput;
+            float clutchPosition = 1f - clutchInput; //when the clutch pedal is pressed then the clutch is disengaged (no friction)!
+
+            if (_isAutomaticClutch)
+            {
+                if (CurrentGear <= 1)
+                {
+                    clutchPosition = Mathf.InverseLerp(_automaticClutchMinAngularVelocity, _automaticClutchMaxAngularVelocity, engineAngularVelocity);
+                    clutchPosition = Mathf.Clamp01(clutchPosition);
+                }
+                else
+                {
+                    clutchPosition = 1;
+                }
+            }
+            else
+            {
+                clutchPosition = Mathf.Clamp01(clutchPosition);
+            }
 
             if (CurrentGear == 0)
             {
@@ -71,13 +116,22 @@ namespace Main
             }
 
             float gearRatio = GetGearRatio(CurrentGear);
-            float gearRationInverse = GetGearRatioInverse(CurrentGear);
-            float angularVelocityDifference = engineAngularVelocity - wheelsAngularVelocityAvg * gearRationInverse;
-            float resultFrictionTorque = Mathf.Clamp(
-                angularVelocityDifference * _clutchTorqueSlipMultiplier * _clutchMaxTorque,
-                    -_clutchMaxTorque, _clutchMaxTorque) * clutchInput;
+            Debug.Log("Gear ratio = " + gearRatio);
 
-            return (-resultFrictionTorque, resultFrictionTorque * gearRatio);
+            float gearRationInverse = GetGearRatioInverse(CurrentGear);
+
+            float angularVelocityDifference = engineAngularVelocity - (wheelsAngularVelocityAvg) * gearRatio;
+            float resultFrictionTorque = Mathf.Clamp(
+                angularVelocityDifference * _clutchTorqueSlipMultiplier * Mathf.Abs(gearRationInverse) * _clutchMaxTorque,
+                    -_clutchMaxTorque, _clutchMaxTorque) * clutchPosition;
+
+            _resultFrictionTorqueChangeLast = _resultFrictionTorqueChange;
+            _resultFrictionTorqueChange = (resultFrictionTorque - _resultFrictionTorqueLast);
+            _resultFrictionTorqueLast = resultFrictionTorque;
+
+            float resultFrictionTorqueCorrected = resultFrictionTorque - (_resultFrictionTorqueChange- _resultFrictionTorqueChangeLast)*ValueTesterScript.testValueStatic;
+
+            return (-resultFrictionTorqueCorrected, resultFrictionTorqueCorrected * gearRatio);
         }
     }
 }

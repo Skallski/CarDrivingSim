@@ -14,7 +14,9 @@ namespace Main
 
         [SerializeField] private EngineAudio[] _audios;
         [field: SerializeField] public float TargetPitch { get; set; }
+        [field: SerializeField] public float TargetThrottle { get; set; }
         [SerializeField] private float _volumeMultiplier = 0.1f;
+        [SerializeField] private float _volumeMultiplierOnThrottle = 0.2f;
 
         public void Play()
         {
@@ -67,7 +69,7 @@ namespace Main
                         : _audios[i - 1]);
                 }
 
-                audioSource.volume = volume * _volumeMultiplier;
+                audioSource.volume = volume * Mathf.Lerp(_volumeMultiplier,_volumeMultiplierOnThrottle,TargetThrottle);
             }
         }
 
