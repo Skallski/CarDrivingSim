@@ -145,5 +145,20 @@ namespace Main
             
             return sum / count;
         }
+
+        public float GetSpeed()
+        {
+            return _rb.velocity.magnitude * 3.6f;
+        }
+
+        public float GetEngineRpm()
+        {
+            return _carEngine.GetRpm();
+        }
+
+        public int GetCurrentGear()
+        {
+            return _carTransmission.CurrentGear;
+        }
     }
 }
