@@ -432,10 +432,24 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     _angularInertia: 0.1
-    _idleRpm: 750
+    _idleRpmLow: 650
+    _idleRpmHigh: 800
     _maxRpm: 6500
-    _isRunning: 0
-    _angularVelocity: 0
+    _isRunning: 1
+    <AngularVelocity>k__BackingField: 0
+  _carTransmission:
+    <CurrentGear>k__BackingField: 0
+    _forwardGearRatios:
+    - 3.308
+    - 1.962
+    - 1.387
+    - 1.079
+    - 0.884
+    - 0.756
+    _reverseGearRatio: -3.583
+    _finalGearRatio: 3.941
+    _clutchMaxTorque: 100
+    _clutchTorqueSlipMultiplier: 2
   _carSuspensions:
   - <SpringRate>k__BackingField: 50000
     <SpringDamping>k__BackingField: 5000
@@ -642,7 +656,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 100, y: 100, z: 1}
+  m_LocalScale: {x: 1000, y: 1000, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1431,8 +1445,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <HorizontalInput>k__BackingField: 0
-  <ForwardInput>k__BackingField: 0
+  <ClutchInput>k__BackingField: 0
   <BrakeInput>k__BackingField: 0
+  <ThrottleInput>k__BackingField: 0
 --- !u!4 &1310840779
 Transform:
   m_ObjectHideFlags: 0

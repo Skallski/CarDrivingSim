@@ -6,10 +6,13 @@ namespace Main
     public class CarInput : MonoBehaviour
     {
         [field: SerializeField] public float HorizontalInput { get; private set; }
-        [field: SerializeField] public float ForwardInput { get; private set; }
+        
+        [field: SerializeField] public float ClutchInput { get; private set; }
         [field:SerializeField] public float BrakeInput { get; private set; }
+        [field: SerializeField] public float ThrottleInput { get; private set; }
 
         public event Action OnIgnitionInputDetected;
+        public event Action<int> OnGearSelected;
         
         private void Update()
         {
@@ -19,8 +22,10 @@ namespace Main
         private void HandleInput()
         {
             HorizontalInput = Input.GetAxisRaw("Horizontal");
-            ForwardInput = Input.GetAxisRaw("Vertical");
+            
+            ClutchInput = Input.GetKey(KeyCode.Q) ? 1 : 0;
             BrakeInput = Input.GetKey(KeyCode.Space) ? 1 : 0;
+            ThrottleInput = Input.GetKey(KeyCode.W) ? 1 : 0;
 
             if (Input.GetKeyDown(KeyCode.P))
             {

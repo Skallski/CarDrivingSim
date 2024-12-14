@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace Main
@@ -16,11 +15,6 @@ namespace Main
         [SerializeField] private EngineAudio[] _audios;
         [field: SerializeField] public float TargetPitch { get; set; }
         [SerializeField] private float _volumeMultiplier = 0.1f;
-
-        // private void Start()
-        // {
-        //     Play();
-        // }
 
         public void Play()
         {

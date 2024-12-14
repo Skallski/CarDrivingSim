@@ -54,13 +54,30 @@ namespace Main
         private void Start()
         {
             SetupAllSuspensions();
+            
             _carEngine.Setup();
+            _carTransmission.Setup();
         }
 
         private void FixedUpdate()
         {
-            UpdateAllWheels();
-            _carEngine.Update();
+            _carEngine.Update(_carInput.ThrottleInput);
+            _carEngineAudioPlayer.TargetPitch = _carEngine.GetRpm();
+
+            // update transmission
+            float poweredWheelsVelocityAvg = GetPoweredWheelsVelocityAvg(out int poweredWheelsCount);
+            (float engineResultTorque, float wheelsResultTorque) = _carTransmission.Update(_carInput.ClutchInput,
+                _carEngine.AngularVelocity, poweredWheelsVelocityAvg);
+
+            float torquePerPoweredWheel = 0;
+            if (poweredWheelsCount > 0)
+            {
+                torquePerPoweredWheel = wheelsResultTorque / poweredWheelsCount;
+            }
+            
+            _carEngine.ApplyExternalTorque(engineResultTorque);
+
+            UpdateAllWheels(torquePerPoweredWheel);
         }
 
         private void SetupAllSuspensions()
@@ -71,20 +88,44 @@ namespace Main
             }
         }
 
-        private void UpdateAllWheels()
+        private void UpdateAllWheels(float engineToWheelsTorque)
         {
             for (int i = 0, c = _carWheels.Length; i < c; i++)
             {
                 _carWheels[i].Update(_rb, _carSuspensions[i], 
                     _maxSteeringAngle * _carInput.HorizontalInput, 
-                    _maxEngineTorque * _carInput.ForwardInput, 
+                    engineToWheelsTorque, 
                     _maxBrakeTorque * _carInput.BrakeInput);
             }
         }
-
+        
         private void HandleEngineIgnition()
         {
             _carEngine.Ignite();
+        }
+
+        private float GetPoweredWheelsVelocityAvg(out int count)
+        {
+            float sum = 0;
+            count = 0;
+            
+            for (int i = 0, c = _carWheels.Length; i < c; i++)
+            {
+                CarWheel wheel = _carWheels[i];
+                if (wheel.IsPowered)
+                {
+                    sum += _carWheels[i].AngularVelocity;
+                    count++;
+                }
+            }
+
+            if (count == 0)
+            {
+                Debug.LogError("No wheels are powered! Avg velocity is 0.");
+                return 0;
+            }
+            
+            return sum / count;
         }
     }
 }
