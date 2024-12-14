@@ -40,7 +40,7 @@ namespace Main
         {
             float angularVelocityRpm = GetRpm();
             
-            return Mathf.Lerp(-_brakingCurve.Evaluate(angularVelocityRpm), _torqueCurve.Evaluate(Mathf.Abs(angularVelocityRpm)),
+            return Mathf.Lerp(-_brakingCurve.Evaluate(Mathf.Abs(angularVelocityRpm)), _torqueCurve.Evaluate(angularVelocityRpm),
                 throttlePositionNormalized);
         }
 
