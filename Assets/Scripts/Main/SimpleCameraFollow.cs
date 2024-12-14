@@ -1,44 +1,40 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SimpleCameraFollow : MonoBehaviour
 {
-    public Rigidbody TrackedRigibody;
+    [SerializeField] private Rigidbody _trackedRigibody;
     [SerializeField] private Vector3 _pointOffset;
     [SerializeField] private Vector3 _eulerAnglesRotationOffset;
-
+    
+    [Space]
     [SerializeField] private float _positionLerpSpeed = 5f;
     [SerializeField] private float _rotationLerpSpeed = 5f;
 
-    private Quaternion smoothedRotation = Quaternion.identity;
+    [Space]
+    [SerializeField] private bool _useVelocity = true;
+    
+    private Quaternion _smoothedRotation = Quaternion.identity;
 
-    public bool useVelocity = true;
-
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if (TrackedRigibody)
+        if (_trackedRigibody)
         {
-            if (useVelocity)
+            if (_useVelocity)
             {
-                float velocityMagnitude = TrackedRigibody.velocity.magnitude;
+                float velocityMagnitude = _trackedRigibody.velocity.magnitude;
 
                 float velocityModeLerp = Mathf.Clamp01(velocityMagnitude*0.25f - 0.5f);
-                Quaternion rotationBasedOnVelocity = Quaternion.LookRotation(TrackedRigibody.velocity.normalized, Vector3.up);
+                Quaternion rotationBasedOnVelocity = Quaternion.LookRotation(_trackedRigibody.velocity.normalized, Vector3.up);
 
-                smoothedRotation = Quaternion.Lerp(smoothedRotation, Quaternion.Lerp(TrackedRigibody.rotation, rotationBasedOnVelocity, velocityModeLerp), Time.deltaTime * _rotationLerpSpeed);
+                _smoothedRotation = Quaternion.Lerp(_smoothedRotation, Quaternion.Lerp(_trackedRigibody.rotation, rotationBasedOnVelocity, velocityModeLerp), Time.deltaTime * _rotationLerpSpeed);
             }
             else
             {
-                smoothedRotation = Quaternion.Lerp(smoothedRotation, TrackedRigibody.rotation, Time.deltaTime * _rotationLerpSpeed);
+                _smoothedRotation = Quaternion.Lerp(_smoothedRotation, _trackedRigibody.rotation, Time.deltaTime * _rotationLerpSpeed);
             }
             
-
-            transform.position = Vector3.Lerp(transform.position, TrackedRigibody.position + smoothedRotation * _pointOffset, Time.deltaTime * _positionLerpSpeed);
-            transform.rotation = smoothedRotation * Quaternion.Euler(_eulerAnglesRotationOffset);
-
-            
+            transform.position = Vector3.Lerp(transform.position, _trackedRigibody.position + _smoothedRotation * _pointOffset, Time.deltaTime * _positionLerpSpeed);
+            transform.rotation = _smoothedRotation * Quaternion.Euler(_eulerAnglesRotationOffset);
         }
     }
 }

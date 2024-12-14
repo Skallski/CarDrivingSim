@@ -477,25 +477,25 @@ MonoBehaviour:
     <PoweredWheelsVelocityDifferenceLimiter>k__BackingField: 15
   _carSuspensions:
   - <SpringRate>k__BackingField: 50000
-    <SpringDamping>k__BackingField: 5000
+    <SpringDamping>k__BackingField: 2500
     <SpringHeight>k__BackingField: 0.4
     <SpringLength>k__BackingField: 0.8
     <ToeInAngle>k__BackingField: 0
     <CasterAngle>k__BackingField: 0
   - <SpringRate>k__BackingField: 50000
-    <SpringDamping>k__BackingField: 5000
+    <SpringDamping>k__BackingField: 2500
     <SpringHeight>k__BackingField: 0.4
     <SpringLength>k__BackingField: 0.8
     <ToeInAngle>k__BackingField: 0
     <CasterAngle>k__BackingField: 0
-  - <SpringRate>k__BackingField: 50000
-    <SpringDamping>k__BackingField: 5000
+  - <SpringRate>k__BackingField: 30000
+    <SpringDamping>k__BackingField: 2500
     <SpringHeight>k__BackingField: 0.4
     <SpringLength>k__BackingField: 0.8
     <ToeInAngle>k__BackingField: 0
     <CasterAngle>k__BackingField: 0
-  - <SpringRate>k__BackingField: 50000
-    <SpringDamping>k__BackingField: 5000
+  - <SpringRate>k__BackingField: 30000
+    <SpringDamping>k__BackingField: 2500
     <SpringHeight>k__BackingField: 0.4
     <SpringLength>k__BackingField: 0.8
     <ToeInAngle>k__BackingField: 0
@@ -529,9 +529,11 @@ MonoBehaviour:
     <AngularVelocity>k__BackingField: 0
     <MovingPartTransform>k__BackingField: {fileID: 2373546364605370633}
     <StaticPartTransform>k__BackingField: {fileID: 1464112056}
+  _airDragCoefficient: 0.33
+  _airDragFrontalArea: 1.9
+  _airDragSagittalArea: 3.5
   _maxSteeringAngle: 30
-  _maxEngineTorque: 500
-  _maxBrakeTorque: 500
+  _maxBrakingTorque: 80
   _rb: {fileID: 255893076}
   _carInput: {fileID: 1310840778}
   _carEngineAudioPlayer: {fileID: 37146385}
@@ -564,7 +566,7 @@ Rigidbody:
   m_Mass: 1000
   m_Drag: 0
   m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_CenterOfMass: {x: 0, y: 0.7, z: 0.54}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
@@ -573,7 +575,7 @@ Rigidbody:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_ImplicitCom: 1
+  m_ImplicitCom: 0
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
@@ -836,12 +838,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f98666915e4a86749b040e4048c1dd0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TrackedRigibody: {fileID: 255893076}
+  _trackedRigibody: {fileID: 255893076}
   _pointOffset: {x: 0, y: 2.04, z: -3.63}
   _eulerAnglesRotationOffset: {x: 15.8, y: 0, z: 0}
   _positionLerpSpeed: 10
   _rotationLerpSpeed: 5
-  useVelocity: 1
+  _useVelocity: 1
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0

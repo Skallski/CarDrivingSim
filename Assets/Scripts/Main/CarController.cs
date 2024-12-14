@@ -10,10 +10,14 @@ namespace Main
         [SerializeField] private CarSuspension[] _carSuspensions;
         [SerializeField] private CarWheel[] _carWheels;
 
+        [Header("Aerodynamics")] 
+        [SerializeField] private float _airDragCoefficient = 0.33f;
+        [SerializeField] private float _airDragFrontalArea = 1.9f;
+        [SerializeField] private float _airDragSagittalArea = 3.5f;
+
         [Header("Max Parameters")] 
         [SerializeField] private float _maxSteeringAngle = 30;
-        [SerializeField] private float _maxEngineTorque = 80;
-        [SerializeField] private float _maxBrakeTorque = 80;
+        [SerializeField] private float _maxBrakingTorque = 80;
 
         [Header("References")]
         [SerializeField] private Rigidbody _rb;
@@ -37,23 +41,18 @@ namespace Main
 
         private void OnEnable()
         {
-            _carInput.OnIgnitionInputDetected += HandleEngineIgnition;
-            
+            _carInput.OnIgnitionInputDetected += _carEngine.Ignite;
             _carEngine.OnEngineStarted += _carEngineAudioPlayer.Play;
             _carEngine.OnEngineStopped += _carEngineAudioPlayer.Stop;
-
             _carInput.OnGearSelected += _carTransmission.SetGear;
         }
 
         private void OnDisable()
         {
-            _carInput.OnIgnitionInputDetected -= HandleEngineIgnition;
-            
+            _carInput.OnIgnitionInputDetected -= _carEngine.Ignite;
             _carEngine.OnEngineStarted -= _carEngineAudioPlayer.Play;
             _carEngine.OnEngineStopped -= _carEngineAudioPlayer.Stop;
-
             _carInput.OnGearSelected -= _carTransmission.SetGear;
-            //
         }
 
         private void Start()
@@ -88,14 +87,18 @@ namespace Main
             //powered wheels velocity difference limiter
             if (_carTransmission.PoweredWheelsVelocityDifferenceLimiter!=0)
             {
-                for(int i=0; i<_carWheels.Length; i++)
+                for (int i = 0, c = _carWheels.Length; i < c; i++)
                 {
-                    if (_carWheels[i].IsPowered)
+                    CarWheel wheel = _carWheels[i];
+                    if (wheel.IsPowered)
                     {
-                        _carWheels[i].ApplyExternalTorque((poweredWheelsVelocityAvg - _carWheels[i].AngularVelocity) * _carTransmission.PoweredWheelsVelocityDifferenceLimiter);
+                        wheel.ApplyExternalTorque((poweredWheelsVelocityAvg - wheel.AngularVelocity) *
+                                                  _carTransmission.PoweredWheelsVelocityDifferenceLimiter);
                     }
                 }
             }
+
+            ApplyAerodynamics();
         }
 
         private void SetupAllSuspensions()
@@ -108,18 +111,13 @@ namespace Main
 
         private void UpdateAllWheels(float engineToWheelsTorque)
         {
+            float targetSteeringAngle = _maxSteeringAngle * _carInput.HorizontalInput;
+            float brakingTorque = _maxBrakingTorque * _carInput.BrakeInput;
+            
             for (int i = 0, c = _carWheels.Length; i < c; i++)
             {
-                _carWheels[i].Update(_rb, _carSuspensions[i], 
-                    _maxSteeringAngle * _carInput.HorizontalInput, 
-                    engineToWheelsTorque, 
-                    _maxBrakeTorque * _carInput.BrakeInput);
+                _carWheels[i].Update(_rb, _carSuspensions[i], targetSteeringAngle, engineToWheelsTorque, brakingTorque);
             }
-        }
-        
-        private void HandleEngineIgnition()
-        {
-            _carEngine.Ignite();
         }
 
         private float GetPoweredWheelsVelocityAvg(out int count)
@@ -144,6 +142,18 @@ namespace Main
             }
             
             return sum / count;
+        }
+
+        private void ApplyAerodynamics()
+        {
+            Vector3 velocity = _rb.velocity;
+            
+            float currentDragArea = Mathf.Lerp(_airDragSagittalArea, _airDragFrontalArea,
+                Mathf.Abs(Vector3.Dot(transform.forward, velocity.normalized)));
+
+            Vector3 airDragForce = 0.5f * _airDragCoefficient * currentDragArea * 1.2f * velocity * velocity.magnitude;
+            
+            _rb.AddForce(-airDragForce);
         }
 
         public float GetSpeed()

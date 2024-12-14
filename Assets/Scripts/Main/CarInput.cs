@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Main
@@ -6,13 +7,24 @@ namespace Main
     public class CarInput : MonoBehaviour
     {
         [field: SerializeField] public float HorizontalInput { get; private set; }
-        
         [field: SerializeField] public float ClutchInput { get; private set; }
         [field:SerializeField] public float BrakeInput { get; private set; }
         [field: SerializeField] public float ThrottleInput { get; private set; }
 
         public event Action OnIgnitionInputDetected;
         public event Action<int> OnGearSelected;
+        
+        private readonly Dictionary<KeyCode, int> _gearKeyMapping = new()
+        {
+            { KeyCode.Alpha0, 0 },
+            { KeyCode.Alpha1, 1 },
+            { KeyCode.Alpha2, 2 },
+            { KeyCode.Alpha3, 3 },
+            { KeyCode.Alpha4, 4 },
+            { KeyCode.Alpha5, 5 },
+            { KeyCode.Alpha6, 6 },
+            { KeyCode.Minus, -1 },
+        };
 
         private void Update()
         {
@@ -32,39 +44,12 @@ namespace Main
                 OnIgnitionInputDetected?.Invoke();
             }
 
-
-            //TODO: zrobic ladniej
-            if (Input.GetKeyDown(KeyCode.Alpha1))
+            foreach (KeyValuePair<KeyCode, int> kvp in _gearKeyMapping)
             {
-                OnGearSelected?.Invoke(1);
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                OnGearSelected?.Invoke(2);
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                OnGearSelected?.Invoke(3);
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha4))
-            {
-                OnGearSelected?.Invoke(4);
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha5))
-            {
-                OnGearSelected?.Invoke(5);
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha6))
-            {
-                OnGearSelected?.Invoke(6);
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha0))
-            {
-                OnGearSelected?.Invoke(0);
-            }
-            if (Input.GetKeyDown(KeyCode.Minus))
-            {
-                OnGearSelected?.Invoke(-1);
+                if (Input.GetKeyDown(kvp.Key))
+                {
+                    OnGearSelected?.Invoke(kvp.Value);
+                }
             }
         }
     }
