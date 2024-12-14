@@ -14,6 +14,7 @@ namespace Main
         [SerializeField] private float _idleRpmLow = 650;
         [SerializeField] private float _idleRpmHigh = 800;
         [SerializeField] private float _maxRpm = 6500;
+        [SerializeField] private float _stallRpm = 400;
         
         [Space]
         [SerializeField] private bool _isRunning;
@@ -39,7 +40,7 @@ namespace Main
         {
             float angularVelocityRpm = GetRpm();
             
-            return Mathf.Lerp(-_brakingCurve.Evaluate(angularVelocityRpm), _torqueCurve.Evaluate(angularVelocityRpm),
+            return Mathf.Lerp(-_brakingCurve.Evaluate(angularVelocityRpm), _torqueCurve.Evaluate(Mathf.Abs(angularVelocityRpm)),
                 throttlePositionNormalized);
         }
 
@@ -57,6 +58,7 @@ namespace Main
             }
             else
             {
+                AngularVelocity = _idleRpmHigh * RPM_TO_RADS; //setting the engine rpm to idle rpm
                 _isRunning = true;
                 OnEngineStarted?.Invoke();
             }
@@ -72,6 +74,11 @@ namespace Main
             {
                 _localThrottle += Mathf.InverseLerp(_idleRpmHigh, _idleRpmLow, rpm);
                 _localThrottle = Mathf.Clamp01(_localThrottle);
+
+                if (rpm < _stallRpm)
+                {
+                    _isRunning = false;
+                }
             }
             else
             {

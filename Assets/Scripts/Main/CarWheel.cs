@@ -21,7 +21,11 @@ namespace Main
 
         private const float FRICTION_MULTIPLIER = 0.5f;
         private const float BRAKING_STABILITY_MULTIPLIER = 0.2f;
-        
+
+        private const float LONGITUDAL_SLIP_DAMPING_MULTIPLIER = 0.1f;
+
+        private float angularVelocityLast = 0f;
+
         public void Update(Rigidbody carRb, CarSuspension carSuspension, float targetSteeringAngle, float engineTorque, float brakingTorque)
         {
             // turning wheel simulation
@@ -89,11 +93,15 @@ namespace Main
                 
                 carRb.AddForceAtPosition(
                     frictionForce * (frictionLimiter * (springCompression * carSuspension.SpringRate)), hit.point);
-                // Debug.DrawLine(hit.point, hit.point + frictionForce * (springCompression * carSuspension.SpringRate) * 0.001f, Color.red);
+                 Debug.DrawLine(hit.point, hit.point + frictionForce * (springCompression * carSuspension.SpringRate) * 0.001f, Color.red);
                 
                 // slowing down the wheel from friction
                 AngularVelocity -= longitudalSlipClamped * frictionLimiter * springCompression *
                     carSuspension.SpringRate / AngularInertia * Time.deltaTime * Radius;
+
+                AngularVelocity += (AngularVelocity - angularVelocityLast) * -0.6f;
+
+                angularVelocityLast = AngularVelocity;
             }
             else
             {

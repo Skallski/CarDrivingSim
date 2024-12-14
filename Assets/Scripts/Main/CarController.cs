@@ -41,6 +41,8 @@ namespace Main
             
             _carEngine.OnEngineStarted += _carEngineAudioPlayer.Play;
             _carEngine.OnEngineStopped += _carEngineAudioPlayer.Stop;
+
+            _carInput.OnGearSelected += _carTransmission.SetGear;
         }
 
         private void OnDisable()
@@ -49,6 +51,9 @@ namespace Main
             
             _carEngine.OnEngineStarted -= _carEngineAudioPlayer.Play;
             _carEngine.OnEngineStopped -= _carEngineAudioPlayer.Stop;
+
+            _carInput.OnGearSelected -= _carTransmission.SetGear;
+            //
         }
 
         private void Start()
@@ -63,6 +68,7 @@ namespace Main
         {
             _carEngine.Update(_carInput.ThrottleInput);
             _carEngineAudioPlayer.TargetPitch = _carEngine.GetRpm();
+            _carEngineAudioPlayer.TargetThrottle = _carInput.ThrottleInput;
 
             // update transmission
             float poweredWheelsVelocityAvg = GetPoweredWheelsVelocityAvg(out int poweredWheelsCount);
