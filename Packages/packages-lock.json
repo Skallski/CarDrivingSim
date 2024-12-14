@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.skallski.utils-toolbox": {
+      "version": "https://github.com/Skallski/UtilsToolbox.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "0366d2ab93f27e9485ca1624958fa2de7b4327f6"
+    },
     "com.unity.burst": {
       "version": "1.8.11",
       "depth": 1,
