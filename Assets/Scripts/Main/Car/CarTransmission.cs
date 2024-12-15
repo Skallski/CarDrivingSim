@@ -1,27 +1,30 @@
 using UnityEngine;
+using Utils;
+using UtilsToolbox.PropertyAttributes;
 
-namespace Main
+namespace Main.Car
 {
     [System.Serializable]
     public class CarTransmission
     {
-        [Header("Settings")]
+        [Header("Clutch")]
         [SerializeField] private bool _isAutomaticClutch;
         [SerializeField] private float _automaticClutchMinAngularVelocity;
         [SerializeField] private float _automaticClutchMaxAngularVelocity;
-        // gears go like this:
-        // -1 : reverse, 0 : neutral, 1 : first, ect.
-        [field: SerializeField] public int CurrentGear { get; set; }
+        [SerializeField] private float _clutchMaxTorque = 100;
+        [SerializeField] private float _clutchTorqueSlipMultiplier = 2;
         
-        [Space]
+        [Header("Gear Ratios")]
         [SerializeField] private float[] _forwardGearRatios;
         [SerializeField] private float _reverseGearRatio;
         [SerializeField] private float _finalGearRatio;
 
-        [Space]
-        [SerializeField] private float _clutchMaxTorque = 100;
-        [SerializeField] private float _clutchTorqueSlipMultiplier = 2;
+        [field: Space]
+        [field: SerializeField] public float PoweredWheelsVelocityDifferenceLimiter { get; private set; } = 1f; 
         
+        [field: Space]
+        [field: SerializeField, ReadOnly] public int CurrentGear { get; private set; } // gears go like this: (-1 : reverse, 0 : neutral, 1 : first, ect.)
+
         private float[] _forwardGearRatiosInverse;
         private float _reverseGearRatioInverse;
         private float _finalGearRatioInverse;
@@ -31,10 +34,8 @@ namespace Main
         private float _resultFrictionTorqueLast = 0;
         private float _resultFrictionTorqueChange = 0;
         private float _resultFrictionTorqueChangeLast = 0;
-
-        [field: SerializeField] public float PoweredWheelsVelocityDifferenceLimiter { get; private set; } = 1f; 
-
-    public void Setup()
+        
+        public void Setup()
         {
             _forwardGearRatiosInverse = new float[_forwardGearRatios.Length];
             for (int i = 0, c = _forwardGearRatiosInverse.Length; i < c; i++)
@@ -48,8 +49,7 @@ namespace Main
 
         private float GetGearRatio(int gear)
         {
-            gear = Mathf.Clamp(gear, -1, _forwardGearRatios.Length);          
-
+            gear = Mathf.Clamp(gear, -1, _forwardGearRatios.Length);
             return gear switch
             {
                 -1 => _reverseGearRatio * _finalGearRatio,
@@ -61,7 +61,6 @@ namespace Main
         private float GetGearRatioInverse(int gear)
         {
             gear = Mathf.Clamp(gear, -1, _forwardGearRatiosInverse.Length);
-
             return gear switch
             {
                 -1 => _reverseGearRatioInverse * _finalGearRatioInverse,
@@ -99,7 +98,8 @@ namespace Main
             {
                 if (CurrentGear <= 1)
                 {
-                    clutchPosition = Mathf.InverseLerp(_automaticClutchMinAngularVelocity, _automaticClutchMaxAngularVelocity, engineAngularVelocity);
+                    clutchPosition = Mathf.InverseLerp(_automaticClutchMinAngularVelocity,
+                        _automaticClutchMaxAngularVelocity, engineAngularVelocity);
                     clutchPosition = Mathf.Clamp01(clutchPosition);
                 }
                 else
@@ -131,7 +131,9 @@ namespace Main
             _resultFrictionTorqueChange = (resultFrictionTorque - _resultFrictionTorqueLast);
             _resultFrictionTorqueLast = resultFrictionTorque;
 
-            float resultFrictionTorqueCorrected = resultFrictionTorque - (_resultFrictionTorqueChange- _resultFrictionTorqueChangeLast)*ValueTesterScript.testValueStatic;
+            float resultFrictionTorqueCorrected = resultFrictionTorque -
+                                                  (_resultFrictionTorqueChange - _resultFrictionTorqueChangeLast) *
+                                                  ValueTester.testValueStatic;
 
             return (-resultFrictionTorqueCorrected, resultFrictionTorqueCorrected * gearRatio);
         }

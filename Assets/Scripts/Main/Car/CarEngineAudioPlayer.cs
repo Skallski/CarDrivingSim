@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Main
+namespace Main.Car
 {
     public class CarEngineAudioPlayer : MonoBehaviour
     {

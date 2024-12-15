@@ -1,6 +1,7 @@
 using UnityEngine;
+using UtilsToolbox.PropertyAttributes;
 
-namespace Main
+namespace Main.Car
 {
     [System.Serializable]
     public class CarWheel
@@ -9,23 +10,18 @@ namespace Main
         [field: SerializeField] public bool IsPowered { get; private set; }
         [field: SerializeField] public float Radius { get; private set; }
         [field: SerializeField] public float AngularInertia { get; private set; }
-        
-        [field: Space]
-        [field: SerializeField] public float AngularVelocity { get; private set; } // rad/s
-
-        [field: Space]
         [field: SerializeField] public Transform MovingPartTransform { get; private set; }
         [field: SerializeField] public Transform StaticPartTransform { get; private set; }
+        
+        [field: Space]
+        [field: SerializeField, ReadOnly] public float AngularVelocity { get; private set; } // rad/s
 
         private float _currentRotation;
+        private float angularVelocityLast = 0f;
 
         private const float LONGITUDAL_FRICTION_MULTIPLIER = 0.2f;
         private const float LATERAL_FRICTION_MULTIPLIER = 0.5f;
         private const float BRAKING_STABILITY_MULTIPLIER = 0.08f;
-
-        private const float LONGITUDAL_SLIP_DAMPING_MULTIPLIER = 0.1f;
-
-        private float angularVelocityLast = 0f;
 
         public void Update(Rigidbody carRb, CarSuspension carSuspension, float targetSteeringAngle, float engineTorque, float brakingTorque)
         {

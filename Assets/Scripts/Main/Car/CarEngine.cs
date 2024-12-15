@@ -1,7 +1,8 @@
 using System;
 using UnityEngine;
+using UtilsToolbox.PropertyAttributes;
 
-namespace Main
+namespace Main.Car
 {
     [System.Serializable]
     public class CarEngine
@@ -9,18 +10,13 @@ namespace Main
         [SerializeField] private AnimationCurve _torqueCurve;
         [SerializeField] private AnimationCurve _brakingCurve;
         [SerializeField] private float _angularInertia = 0.1f;
-        
-        [Space]
         [SerializeField] private float _idleRpmLow = 650;
         [SerializeField] private float _idleRpmHigh = 800;
-        [SerializeField] private float _maxRpm = 6500;
         [SerializeField] private float _stallRpm = 400;
         
         [Space]
-        [SerializeField] private bool _isRunning;
-
-        [field: Space]
-        [field: SerializeField] public float AngularVelocity { get; private set; }
+        [SerializeField, ReadOnly] private bool _isRunning;
+        [field: SerializeField, ReadOnly] public float AngularVelocity { get; private set; }
 
         public event Action OnEngineStarted;
         public event Action OnEngineStopped;

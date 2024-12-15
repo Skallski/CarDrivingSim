@@ -1,3 +1,4 @@
+using Main.Car;
 using TMPro;
 using UnityEngine;
 using UtilsToolbox.Utils.MultiSwitch;

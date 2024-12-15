@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Main
+namespace Main.Car
 {
     [System.Serializable]
     public class CarSuspension
@@ -14,7 +14,6 @@ namespace Main
         [field: Header("Angles")]
         [field: SerializeField] public float ToeInAngle { get; private set; } // zbieznosc kol (in degreees)
         [field: SerializeField] public float CasterAngle { get; private set; } // (in degreees)
-        // [field: SerializeField] public float CentreOfTurningAngle { get; private set; }
 
         public Vector3 LocalRaycastStartPoint { get; private set; }
         public Vector3 LocalRaycastDirection { get; private set; }

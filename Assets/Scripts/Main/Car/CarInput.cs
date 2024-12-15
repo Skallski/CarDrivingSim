@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Main
+namespace Main.Car
 {
     public class CarInput : MonoBehaviour
     {
