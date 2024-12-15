@@ -19,8 +19,9 @@ namespace Main
 
         private float _currentRotation;
 
-        private const float FRICTION_MULTIPLIER = 0.5f;
-        private const float BRAKING_STABILITY_MULTIPLIER = 0.2f;
+        private const float LONGITUDAL_FRICTION_MULTIPLIER = 0.2f;
+        private const float LATERAL_FRICTION_MULTIPLIER = 0.5f;
+        private const float BRAKING_STABILITY_MULTIPLIER = 0.08f;
 
         private const float LONGITUDAL_SLIP_DAMPING_MULTIPLIER = 0.1f;
 
@@ -34,8 +35,6 @@ namespace Main
                 StaticPartTransform.rotation = Quaternion.Euler(0, targetSteeringAngle, 0) * carRb.rotation;
             }
 
-            // spinning wheel simulation
-            _currentRotation += AngularVelocity * Mathf.Rad2Deg * Time.deltaTime;
             if (IsPowered)
             {
                 AngularVelocity += (engineTorque / AngularInertia) * Time.deltaTime;
@@ -79,8 +78,8 @@ namespace Main
                 float longitudalSlip = wheelRollingVelocity - Vector3.Dot(worldWheelVelocity, forwardForceDirection);
                 float lateralSlip = Vector3.Dot(worldWheelVelocity, -sideForceDirection);
 
-                float longitudalSlipClamped = Mathf.Clamp(longitudalSlip * FRICTION_MULTIPLIER, -1, 1);
-                float lateralSlipClamped = Mathf.Clamp(lateralSlip * FRICTION_MULTIPLIER, -1, 1);
+                float longitudalSlipClamped = Mathf.Clamp(longitudalSlip * LONGITUDAL_FRICTION_MULTIPLIER, -1, 1);
+                float lateralSlipClamped = Mathf.Clamp(lateralSlip * LATERAL_FRICTION_MULTIPLIER, -1, 1);
                 
                 float frictionLimiter = 1f;
                 Vector2 slipVector = new Vector2(longitudalSlipClamped, lateralSlipClamped);
@@ -108,6 +107,9 @@ namespace Main
                 carSuspension.SpringCompressionLastFrame = 0;
                 StaticPartTransform.position = raycastWorldPos + raycastWorldDir * (carSuspension.SpringLength - Radius);
             }
+
+            // spinning wheel simulation
+            _currentRotation += AngularVelocity * Mathf.Rad2Deg * Time.deltaTime;
         }
 
         public void ApplyExternalTorque(float torque)
