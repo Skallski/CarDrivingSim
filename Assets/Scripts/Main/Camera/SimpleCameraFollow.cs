@@ -24,11 +24,17 @@ namespace Main.Camera
                 if (_useVelocity)
                 {
                     float velocityMagnitude = _trackedRigibody.velocity.magnitude;
+                    float velocityModeLerp = Mathf.Clamp01(velocityMagnitude * 0.25f - 0.5f);
 
-                    float velocityModeLerp = Mathf.Clamp01(velocityMagnitude*0.25f - 0.5f);
-                    Quaternion rotationBasedOnVelocity = Quaternion.LookRotation(_trackedRigibody.velocity.normalized, Vector3.up);
-
-                    _smoothedRotation = Quaternion.Lerp(_smoothedRotation, Quaternion.Lerp(_trackedRigibody.rotation, rotationBasedOnVelocity, velocityModeLerp), Time.deltaTime * _rotationLerpSpeed);
+                    if (velocityMagnitude > 0.5f)
+                    {
+                        Quaternion rotationBasedOnVelocity = Quaternion.LookRotation(_trackedRigibody.velocity.normalized, Vector3.up);
+                        _smoothedRotation = Quaternion.Lerp(_smoothedRotation, Quaternion.Lerp(_trackedRigibody.rotation, rotationBasedOnVelocity, velocityModeLerp), Time.deltaTime * _rotationLerpSpeed);
+                    }
+                    else
+                    {
+                        _smoothedRotation = Quaternion.Lerp(_smoothedRotation, _trackedRigibody.rotation, Time.deltaTime * _rotationLerpSpeed);
+                    }
                 }
                 else
                 {
