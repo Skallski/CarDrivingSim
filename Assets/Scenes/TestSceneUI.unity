@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028326, g: 0.22571333, b: 0.30692202, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -360,7 +360,7 @@ GameObject:
   - component: {fileID: 69262019}
   - component: {fileID: 69262021}
   m_Layer: 5
-  m_Name: Blinker_Right
+  m_Name: Blinker_Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -398,7 +398,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.2913793, g: 0.6981132, b: 0, a: 1}
+  m_Color: {r: 0.084905684, g: 0.084905684, b: 0.084905684, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -439,7 +439,7 @@ MonoBehaviour:
   _state: -1
   _source: {fileID: 69262019}
   _values:
-  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 0.08627451, g: 0.08627451, b: 0.08627451, a: 1}
   - {r: 0, g: 1, b: 0, a: 1}
 --- !u!1 &124278682
 GameObject:
@@ -885,6 +885,13 @@ MonoBehaviour:
     <MovingPartTransform>k__BackingField: {fileID: 2373546364605370633}
     <StaticPartTransform>k__BackingField: {fileID: 1464112056}
     <AngularVelocity>k__BackingField: 0
+  _carBlinkers:
+  - _side: 0
+    <IsOn>k__BackingField: 0
+    <IsLit>k__BackingField: 0
+  - _side: 1
+    <IsOn>k__BackingField: 0
+    <IsLit>k__BackingField: 0
   _airDragCoefficient: 0.33
   _airDragFrontalArea: 1.9
   _airDragSagittalArea: 3.5
@@ -1707,7 +1714,6 @@ GameObject:
   m_Component:
   - component: {fileID: 547945115}
   - component: {fileID: 547945118}
-  - component: {fileID: 547945117}
   - component: {fileID: 547945116}
   m_Layer: 7
   m_Name: Camera_Mirror_Left
@@ -1775,14 +1781,6 @@ MonoBehaviour:
     mipBias: 0
     varianceClampScale: 0.9
     contrastAdaptiveSharpening: 0
---- !u!81 &547945117
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 547945114}
-  m_Enabled: 1
 --- !u!20 &547945118
 Camera:
   m_ObjectHideFlags: 0
@@ -1847,7 +1845,7 @@ GameObject:
   - component: {fileID: 566956336}
   - component: {fileID: 566956338}
   m_Layer: 5
-  m_Name: Blinker_Left
+  m_Name: Blinker_Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1885,7 +1883,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.2913793, g: 0.6981132, b: 0, a: 1}
+  m_Color: {r: 0.08627451, g: 0.08627451, b: 0.08627451, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1926,7 +1924,7 @@ MonoBehaviour:
   _state: -1
   _source: {fileID: 566956336}
   _values:
-  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 0.08627451, g: 0.08627451, b: 0.08627451, a: 1}
   - {r: 0, g: 1, b: 0, a: 1}
 --- !u!1 &579863775
 GameObject:
@@ -2439,7 +2437,6 @@ GameObject:
   m_Component:
   - component: {fileID: 905786689}
   - component: {fileID: 905786692}
-  - component: {fileID: 905786691}
   - component: {fileID: 905786690}
   m_Layer: 7
   m_Name: Camera_Mirror_Right
@@ -2507,14 +2504,6 @@ MonoBehaviour:
     mipBias: 0
     varianceClampScale: 0.9
     contrastAdaptiveSharpening: 0
---- !u!81 &905786691
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 905786688}
-  m_Enabled: 1
 --- !u!20 &905786692
 Camera:
   m_ObjectHideFlags: 0
@@ -4988,7 +4977,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1754644410
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5380,8 +5369,8 @@ MonoBehaviour:
   _speedLabel: {fileID: 1683641868}
   _rpmLabel: {fileID: 1386958038}
   _gearSwitch: {fileID: 1233702592}
-  _leftBlinkerSwitch: {fileID: 0}
-  _rightBlinkerSwitch: {fileID: 0}
+  _leftBlinkerSwitch: {fileID: 69262021}
+  _rightBlinkerSwitch: {fileID: 566956338}
   _carController: {fileID: 255893074}
 --- !u!1 &2112746780
 GameObject:
@@ -5411,8 +5400,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 566956335}
   - {fileID: 69262018}
+  - {fileID: 566956335}
   m_Father: {fileID: 2103217029}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
