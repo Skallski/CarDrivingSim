@@ -13,6 +13,7 @@ namespace Main.Car
 
         public event Action OnIgnitionInputDetected;
         public event Action<int> OnGearSelected;
+        public event Action<Blinker.Side> OnBlinkerInteracted;
         
         private readonly Dictionary<KeyCode, int> _gearKeyMapping = new()
         {
@@ -50,6 +51,16 @@ namespace Main.Car
                 {
                     OnGearSelected?.Invoke(kvp.Value);
                 }
+            }
+
+            if (Input.GetKeyDown(KeyCode.LeftBracket))
+            {
+                OnBlinkerInteracted?.Invoke(Blinker.Side.Left);
+            }
+            
+            if (Input.GetKeyDown(KeyCode.RightBracket))
+            {
+                OnBlinkerInteracted?.Invoke(Blinker.Side.Right);
             }
         }
     }
