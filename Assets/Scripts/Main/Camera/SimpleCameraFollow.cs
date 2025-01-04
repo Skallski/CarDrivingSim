@@ -17,9 +17,39 @@ namespace Main.Camera
     
         private Quaternion _smoothedRotation = Quaternion.identity;
 
+        [SerializeField] private bool firstPersonMode = false;
+
         private void LateUpdate()
         {
-            if (_trackedRigibody)
+            if (firstPersonMode==false)
+            {
+                if (_trackedRigibody)
+                {
+                    if (_useVelocity)
+                    {
+                        float velocityMagnitude = _trackedRigibody.velocity.magnitude;
+                        float velocityModeLerp = Mathf.Clamp01(velocityMagnitude * 0.25f - 0.5f);
+
+                        if (velocityMagnitude > 0.5f)
+                        {
+                            Quaternion rotationBasedOnVelocity = Quaternion.LookRotation(_trackedRigibody.velocity.normalized, Vector3.up);
+                            _smoothedRotation = Quaternion.Lerp(_smoothedRotation, Quaternion.Lerp(_trackedRigibody.transform.rotation, rotationBasedOnVelocity, velocityModeLerp), Time.deltaTime * _rotationLerpSpeed);
+                        }
+                        else
+                        {
+                            _smoothedRotation = Quaternion.Lerp(_smoothedRotation, _trackedRigibody.transform.rotation, Time.deltaTime * _rotationLerpSpeed);
+                        }
+                    }
+                    else
+                    {
+                        _smoothedRotation = Quaternion.Lerp(_smoothedRotation, _trackedRigibody.transform.rotation, Time.deltaTime * _rotationLerpSpeed);
+                    }
+
+                    transform.position = Vector3.Lerp(transform.position, _trackedRigibody.transform.position + _smoothedRotation * _pointOffset, Time.deltaTime * _positionLerpSpeed);
+                    transform.rotation = _smoothedRotation * Quaternion.Euler(_eulerAnglesRotationOffset);
+                }
+            }
+            else //first person mode
             {
                 if (_useVelocity)
                 {
@@ -29,21 +59,23 @@ namespace Main.Camera
                     if (velocityMagnitude > 0.5f)
                     {
                         Quaternion rotationBasedOnVelocity = Quaternion.LookRotation(_trackedRigibody.velocity.normalized, Vector3.up);
-                        _smoothedRotation = Quaternion.Lerp(_smoothedRotation, Quaternion.Lerp(_trackedRigibody.rotation, rotationBasedOnVelocity, velocityModeLerp), Time.deltaTime * _rotationLerpSpeed);
+                        _smoothedRotation = Quaternion.Lerp(_smoothedRotation, Quaternion.Lerp(_trackedRigibody.transform.rotation, rotationBasedOnVelocity, velocityModeLerp), Time.deltaTime * _rotationLerpSpeed);
                     }
                     else
                     {
-                        _smoothedRotation = Quaternion.Lerp(_smoothedRotation, _trackedRigibody.rotation, Time.deltaTime * _rotationLerpSpeed);
+                        _smoothedRotation = Quaternion.Lerp(_smoothedRotation, _trackedRigibody.transform.rotation, Time.deltaTime * _rotationLerpSpeed);
                     }
                 }
                 else
                 {
-                    _smoothedRotation = Quaternion.Lerp(_smoothedRotation, _trackedRigibody.rotation, Time.deltaTime * _rotationLerpSpeed);
+                    _smoothedRotation = Quaternion.Lerp(_smoothedRotation, _trackedRigibody.transform.rotation, Time.deltaTime * _rotationLerpSpeed);
                 }
-            
-                transform.position = Vector3.Lerp(transform.position, _trackedRigibody.position + _smoothedRotation * _pointOffset, Time.deltaTime * _positionLerpSpeed);
+
+                transform.position = _trackedRigibody.transform.position + _smoothedRotation * _pointOffset;
                 transform.rotation = _smoothedRotation * Quaternion.Euler(_eulerAnglesRotationOffset);
+                
             }
+            
         }
     }
 }
