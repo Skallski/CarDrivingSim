@@ -15,7 +15,7 @@ namespace Main.UI
         
         [Space]
         [SerializeField] private CarController _carController;
-
+        
         private void Update()
         {
             _speedLabel.SetText($"{_carController.GetSpeed():F0} <size=10>KMH</size>");
@@ -25,6 +25,36 @@ namespace Main.UI
             if (_gearSwitch.State != newState)
             {
                 _gearSwitch.SetState(newState);
+            }
+
+            UpdateBlinkers();
+        }
+
+        private void UpdateBlinkers()
+        {
+            if (_leftBlinkerSwitch == null || _rightBlinkerSwitch == null)
+            {
+                return;
+            }
+            
+            Blinker leftBLinker = _carController.GetBlinker(Blinker.Side.Left);
+            if (leftBLinker.IsOn)
+            {
+                _leftBlinkerSwitch.SetState(leftBLinker.IsLit);
+            }
+            else
+            {
+                _leftBlinkerSwitch.SetState(false);
+            }
+
+            Blinker rightBlinker = _carController.GetBlinker(Blinker.Side.Right);
+            if (rightBlinker.IsOn)
+            {
+                _rightBlinkerSwitch.SetState(rightBlinker.IsLit);
+            }
+            else
+            {
+                _rightBlinkerSwitch.SetState(false);
             }
         }
     }

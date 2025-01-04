@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Main.Car
@@ -9,6 +10,7 @@ namespace Main.Car
         [SerializeField] private CarTransmission _carTransmission;
         [SerializeField] private CarSuspension[] _carSuspensions;
         [SerializeField] private CarWheel[] _carWheels;
+        [SerializeField] private Blinker[] _carBlinkers;
 
         [Header("Aerodynamics")] 
         [SerializeField] private float _airDragCoefficient = 0.33f;
@@ -45,6 +47,11 @@ namespace Main.Car
             _carEngine.OnEngineStarted += _carEngineAudioPlayer.Play;
             _carEngine.OnEngineStopped += _carEngineAudioPlayer.Stop;
             _carInput.OnGearSelected += _carTransmission.SetGear;
+
+            foreach (Blinker blinker in _carBlinkers)
+            {
+                _carInput.OnBlinkerInteracted += blinker.OnInteracted;
+            }
         }
 
         private void OnDisable()
@@ -53,6 +60,11 @@ namespace Main.Car
             _carEngine.OnEngineStarted -= _carEngineAudioPlayer.Play;
             _carEngine.OnEngineStopped -= _carEngineAudioPlayer.Stop;
             _carInput.OnGearSelected -= _carTransmission.SetGear;
+            
+            foreach (Blinker blinker in _carBlinkers)
+            {
+                _carInput.OnBlinkerInteracted -= blinker.OnInteracted;
+            }
         }
 
         private void Start()
@@ -100,6 +112,11 @@ namespace Main.Car
 
             ApplyAerodynamics();
         }
+        
+        private void Update()
+        {
+            UpdateBlinkers();
+        }
 
         private void SetupAllSuspensions()
         {
@@ -117,6 +134,14 @@ namespace Main.Car
             for (int i = 0, c = _carWheels.Length; i < c; i++)
             {
                 _carWheels[i].Update(_rb, _carSuspensions[i], targetSteeringAngle, engineToWheelsTorque, brakingTorque);
+            }
+        }
+
+        private void UpdateBlinkers()
+        {
+            foreach (Blinker blinker in _carBlinkers)
+            {
+                blinker.Update();
             }
         }
 
@@ -151,7 +176,7 @@ namespace Main.Car
             float currentDragArea = Mathf.Lerp(_airDragSagittalArea, _airDragFrontalArea,
                 Mathf.Abs(Vector3.Dot(transform.forward, velocity.normalized)));
 
-            Vector3 airDragForce = 0.5f * _airDragCoefficient * currentDragArea * 1.2f * velocity * velocity.magnitude;
+            Vector3 airDragForce = velocity * (0.5f * _airDragCoefficient * currentDragArea * 1.2f * velocity.magnitude);
             
             _rb.AddForce(-airDragForce);
         }
@@ -169,6 +194,14 @@ namespace Main.Car
         public int GetCurrentGear()
         {
             return _carTransmission.CurrentGear;
+        }
+
+        public Blinker GetBlinker(Blinker.Side side)
+        {
+            int val = (int)side;
+            val = Mathf.Clamp(val, 0, _carBlinkers.Length - 1);
+
+            return _carBlinkers[val];
         }
     }
 }
