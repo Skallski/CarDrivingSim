@@ -17,7 +17,7 @@ namespace Main.Camera
     
         private Quaternion _smoothedRotation = Quaternion.identity;
 
-        private void Update()
+        private void LateUpdate()
         {
             if (_trackedRigibody)
             {
