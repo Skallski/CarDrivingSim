@@ -1,15 +1,16 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilsToolbox.PropertyAttributes;
 
 namespace Main.Car
 {
     public class CarInput : MonoBehaviour
     {
-        [field: SerializeField] public float HorizontalInput { get; private set; }
-        [field: SerializeField] public float ClutchInput { get; private set; }
-        [field:SerializeField] public float BrakeInput { get; private set; }
-        [field: SerializeField] public float ThrottleInput { get; private set; }
+        [field: SerializeField, ReadOnly] public float SteeringWheelInput { get; private set; }
+        [field: SerializeField, ReadOnly] public float ClutchInput { get; private set; }
+        [field:SerializeField, ReadOnly] public float BrakeInput { get; private set; }
+        [field: SerializeField, ReadOnly] public float ThrottleInput { get; private set; }
 
         public event Action OnIgnitionInputDetected;
         public event Action<int> OnGearSelected;
@@ -34,7 +35,7 @@ namespace Main.Car
         
         private void HandleInput()
         {
-            HorizontalInput = Input.GetAxisRaw("Horizontal");
+            SteeringWheelInput = Input.GetAxisRaw("Horizontal");
             
             ClutchInput = Input.GetKey(KeyCode.L) ? 1 : 0;
             BrakeInput = Input.GetKey(KeyCode.Space) ? 1 : 0;

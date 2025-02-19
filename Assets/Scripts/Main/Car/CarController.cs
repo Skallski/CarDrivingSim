@@ -132,7 +132,7 @@ namespace Main.Car
 
         private void UpdateAllWheels(float engineToWheelsTorque)
         {
-            float targetSteeringAngle = _maxSteeringAngle * _carInput.HorizontalInput;
+            float targetSteeringAngle = _maxSteeringAngle * _carInput.SteeringWheelInput;
             float brakingTorque = _maxBrakingTorque * _carInput.BrakeInput;
             
             for (int i = 0, c = _carWheels.Length; i < c; i++)
@@ -185,21 +185,13 @@ namespace Main.Car
             _rb.AddForce(-airDragForce);
         }
 
-        public float GetSpeed() => _rb.velocity.magnitude * 3.6f;
+        public float GetSpeed() => _carEngine.IsRunning ? _rb.velocity.magnitude * 3.6f : 0;
 
-        public float GetEngineRpm() => _carEngine.GetRpm();
+        public float GetEngineRpm() => _carEngine.IsRunning ? _carEngine.GetRpm() : 0;
 
         public int GetCurrentGear() => _carTransmission.CurrentGear;
 
-        public bool IsTurnedOn() => _carEngine.IsRunning;
-
-        public CarBlinker GetBlinker(CarBlinker.Side side)
-        {
-            int val = (int)side;
-            val = Mathf.Clamp(val, 0, _carBlinkers.Length - 1);
-
-            return _carBlinkers[val];
-        }
+        public CarBlinker GetBlinker(CarBlinker.Side side) => _carBlinkers[(int) side];
 
         public CarEngine GetEngine() => _carEngine;
     }

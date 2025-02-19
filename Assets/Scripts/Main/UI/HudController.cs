@@ -7,7 +7,7 @@ namespace Main.UI
 {
     public class HudController : MonoBehaviour
     {
-        [SerializeField] private CompositeMultiSwitchGameObjectsActive _digitalElementsSwitch;
+        [SerializeField] private MultiSwitch _digitalElementsSwitch;
         [SerializeField] private TextMeshProUGUI _speedLabel;
         [SerializeField] private TextMeshProUGUI _rpmLabel;
         [SerializeField] private MultiSwitch _gearSwitch;
