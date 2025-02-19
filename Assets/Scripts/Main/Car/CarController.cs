@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace Main.Car
@@ -10,7 +9,7 @@ namespace Main.Car
         [SerializeField] private CarTransmission _carTransmission;
         [SerializeField] private CarSuspension[] _carSuspensions;
         [SerializeField] private CarWheel[] _carWheels;
-        [SerializeField] private Blinker[] _carBlinkers;
+        [SerializeField] private CarBlinker[] _carBlinkers;
 
         [Header("Aerodynamics")] 
         [SerializeField] private float _airDragCoefficient = 0.33f;
@@ -25,6 +24,7 @@ namespace Main.Car
         [SerializeField] private Rigidbody _rb;
         [SerializeField] private CarInput _carInput;
         [SerializeField] private CarEngineAudioPlayer _carEngineAudioPlayer;
+        [SerializeField] private CarBlinkerAudioPlayer _carBlinkerAudioPlayer;
         
 #if UNITY_EDITOR
         private void Reset()
@@ -44,26 +44,30 @@ namespace Main.Car
         private void OnEnable()
         {
             _carInput.OnIgnitionInputDetected += _carEngine.Ignite;
-            _carEngine.OnEngineStarted += _carEngineAudioPlayer.Play;
-            _carEngine.OnEngineStopped += _carEngineAudioPlayer.Stop;
             _carInput.OnGearSelected += _carTransmission.SetGear;
 
-            foreach (Blinker blinker in _carBlinkers)
+            _carEngine.OnEngineStarted += _carEngineAudioPlayer.Play;
+            _carEngine.OnEngineStopped += _carEngineAudioPlayer.Stop;
+
+            foreach (CarBlinker blinker in _carBlinkers)
             {
                 _carInput.OnBlinkerInteracted += blinker.OnInteracted;
+                blinker.OnBlink += _carBlinkerAudioPlayer.PlaySound;
             }
         }
 
         private void OnDisable()
         {
             _carInput.OnIgnitionInputDetected -= _carEngine.Ignite;
+            _carInput.OnGearSelected -= _carTransmission.SetGear;
+
             _carEngine.OnEngineStarted -= _carEngineAudioPlayer.Play;
             _carEngine.OnEngineStopped -= _carEngineAudioPlayer.Stop;
-            _carInput.OnGearSelected -= _carTransmission.SetGear;
             
-            foreach (Blinker blinker in _carBlinkers)
+            foreach (CarBlinker blinker in _carBlinkers)
             {
                 _carInput.OnBlinkerInteracted -= blinker.OnInteracted;
+                blinker.OnBlink -= _carBlinkerAudioPlayer.PlaySound;
             }
         }
 
@@ -139,7 +143,7 @@ namespace Main.Car
 
         private void UpdateBlinkers()
         {
-            foreach (Blinker blinker in _carBlinkers)
+            foreach (CarBlinker blinker in _carBlinkers)
             {
                 blinker.Update();
             }
@@ -181,27 +185,22 @@ namespace Main.Car
             _rb.AddForce(-airDragForce);
         }
 
-        public float GetSpeed()
-        {
-            return _rb.velocity.magnitude * 3.6f;
-        }
+        public float GetSpeed() => _rb.velocity.magnitude * 3.6f;
 
-        public float GetEngineRpm()
-        {
-            return _carEngine.GetRpm();
-        }
+        public float GetEngineRpm() => _carEngine.GetRpm();
 
-        public int GetCurrentGear()
-        {
-            return _carTransmission.CurrentGear;
-        }
+        public int GetCurrentGear() => _carTransmission.CurrentGear;
 
-        public Blinker GetBlinker(Blinker.Side side)
+        public bool IsTurnedOn() => _carEngine.IsRunning;
+
+        public CarBlinker GetBlinker(CarBlinker.Side side)
         {
             int val = (int)side;
             val = Mathf.Clamp(val, 0, _carBlinkers.Length - 1);
 
             return _carBlinkers[val];
         }
+
+        public CarEngine GetEngine() => _carEngine;
     }
 }

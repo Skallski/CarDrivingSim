@@ -7,6 +7,7 @@ namespace Main.UI
 {
     public class HudController : MonoBehaviour
     {
+        [SerializeField] private CompositeMultiSwitchGameObjectsActive _digitalElementsSwitch;
         [SerializeField] private TextMeshProUGUI _speedLabel;
         [SerializeField] private TextMeshProUGUI _rpmLabel;
         [SerializeField] private MultiSwitch _gearSwitch;
@@ -15,16 +16,43 @@ namespace Main.UI
         
         [Space]
         [SerializeField] private CarController _carController;
-        
+
+        private void OnEnable()
+        {
+            _carController.GetEngine().OnEngineStarted += OnEngineStarted;
+            _carController.GetEngine().OnEngineStopped += OnEngineStopped;
+        }
+
+        private void OnDisable()
+        {
+            _carController.GetEngine().OnEngineStarted -= OnEngineStarted;
+            _carController.GetEngine().OnEngineStopped -= OnEngineStopped;
+        }
+
+        private void Start()
+        {
+            _digitalElementsSwitch.SetState(false);
+        }
+
         private void Update()
         {
-            _speedLabel.SetText($"{_carController.GetSpeed():F0} <size=10>KMH</size>");
-            _rpmLabel.SetText($"{_carController.GetEngineRpm():F0} <size=10>RPM</size>");
-
-            int newState = _carController.GetCurrentGear() + 1;
-            if (_gearSwitch.State != newState)
+            if (_speedLabel.gameObject.activeSelf)
             {
-                _gearSwitch.SetState(newState);
+                _speedLabel.SetText($"{_carController.GetSpeed():F0} <size=10>KMH</size>");
+            }
+
+            if (_rpmLabel.gameObject.activeSelf)
+            {
+                _rpmLabel.SetText($"{_carController.GetEngineRpm():F0} <size=10>RPM</size>");
+            }
+
+            if (_gearSwitch.gameObject.activeSelf)
+            {
+                int newState = _carController.GetCurrentGear() + 1;
+                if (_gearSwitch.State != newState)
+                {
+                    _gearSwitch.SetState(newState);
+                }
             }
 
             UpdateBlinkers();
@@ -37,25 +65,30 @@ namespace Main.UI
                 return;
             }
             
-            Blinker leftBLinker = _carController.GetBlinker(Blinker.Side.Left);
-            if (leftBLinker.IsOn)
-            {
-                _leftBlinkerSwitch.SetState(leftBLinker.IsLit);
-            }
-            else
-            {
-                _leftBlinkerSwitch.SetState(false);
-            }
+            UpdateSingleBlinker(_carController.GetBlinker(CarBlinker.Side.Left), ref _leftBlinkerSwitch);
+            UpdateSingleBlinker(_carController.GetBlinker(CarBlinker.Side.Right), ref _rightBlinkerSwitch);
 
-            Blinker rightBlinker = _carController.GetBlinker(Blinker.Side.Right);
-            if (rightBlinker.IsOn)
+            void UpdateSingleBlinker(CarBlinker blinker, ref MultiSwitch carBlinkerSwitch)
             {
-                _rightBlinkerSwitch.SetState(rightBlinker.IsLit);
+                if (blinker.IsOn)
+                {
+                    carBlinkerSwitch.SetState(blinker.IsLit);
+                }
+                else
+                {
+                    carBlinkerSwitch.SetState(false);
+                }
             }
-            else
-            {
-                _rightBlinkerSwitch.SetState(false);
-            }
+        }
+        
+        private void OnEngineStarted()
+        {
+            _digitalElementsSwitch.SetState(true);
+        }
+        
+        private void OnEngineStopped()
+        {
+            _digitalElementsSwitch.SetState(false);
         }
     }
 }

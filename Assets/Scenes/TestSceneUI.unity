@@ -812,7 +812,7 @@ MonoBehaviour:
     _idleRpmLow: 650
     _idleRpmHigh: 800
     _stallRpm: 400
-    _isRunning: 1
+    <IsRunning>k__BackingField: 0
     <AngularVelocity>k__BackingField: 0
   _carTransmission:
     _isAutomaticClutch: 0
@@ -900,6 +900,7 @@ MonoBehaviour:
   _rb: {fileID: 255893076}
   _carInput: {fileID: 1310840778}
   _carEngineAudioPlayer: {fileID: 37146385}
+  _carBlinkerAudioPlayer: {fileID: 2046324041}
 --- !u!4 &255893075
 Transform:
   m_ObjectHideFlags: 0
@@ -918,6 +919,7 @@ Transform:
   - {fileID: 536230514}
   - {fileID: 543450653245355463}
   - {fileID: 37146384}
+  - {fileID: 2046324040}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &255893076
@@ -3245,6 +3247,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0a26afbc7a0e4cbe9b88a6b3c8c8785, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _digitalElementsSwitch: {fileID: 0}
   _speedLabel: {fileID: 1227307719}
   _rpmLabel: {fileID: 626342935}
   _gearSwitch: {fileID: 805082670}
@@ -5314,6 +5317,150 @@ MonoBehaviour:
   m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
   m_DragThreshold: 10
+--- !u!1 &2046324039
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2046324040}
+  - component: {fileID: 2046324041}
+  - component: {fileID: 2046324042}
+  m_Layer: 7
+  m_Name: BlinkerAudioPlayer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2046324040
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046324039}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 255893075}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2046324041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046324039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 395e353b659b4db98c2b606e06ae0d11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _onSfx: {fileID: 8300000, guid: 9de0a280506354ce1866de2bbaaff4e6, type: 3}
+  _offSfx: {fileID: 8300000, guid: 0215bebba357e48788c3699202c573ae, type: 3}
+  _audioSource: {fileID: 2046324042}
+--- !u!82 &2046324042
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046324039}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &2103217028
 GameObject:
   m_ObjectHideFlags: 0
@@ -5324,6 +5471,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2103217029}
   - component: {fileID: 2103217030}
+  - component: {fileID: 2103217031}
   m_Layer: 5
   m_Name: HUD
   m_TagString: Untagged
@@ -5366,12 +5514,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0a26afbc7a0e4cbe9b88a6b3c8c8785, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _digitalElementsSwitch: {fileID: 2103217031}
   _speedLabel: {fileID: 1683641868}
   _rpmLabel: {fileID: 1386958038}
   _gearSwitch: {fileID: 1233702592}
   _leftBlinkerSwitch: {fileID: 69262021}
   _rightBlinkerSwitch: {fileID: 566956338}
   _carController: {fileID: 255893074}
+--- !u!114 &2103217031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2103217028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4737a74a688404f40a0b430959aab2af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _defaultStateOnAwake: -1
+  _state: -1
+  _elements:
+  - {fileID: 1233702588}
+  - {fileID: 1683641866}
+  - {fileID: 1386958036}
 --- !u!1 &2112746780
 GameObject:
   m_ObjectHideFlags: 0

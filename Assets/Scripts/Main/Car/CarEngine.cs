@@ -13,9 +13,9 @@ namespace Main.Car
         [SerializeField] private float _idleRpmLow = 650;
         [SerializeField] private float _idleRpmHigh = 800;
         [SerializeField] private float _stallRpm = 400;
-        
-        [Space]
-        [SerializeField, ReadOnly] private bool _isRunning;
+
+        [field: Space] 
+        [field: SerializeField, ReadOnly] public bool IsRunning { get; private set; }
         [field: SerializeField, ReadOnly] public float AngularVelocity { get; private set; }
 
         public event Action OnEngineStarted;
@@ -29,7 +29,7 @@ namespace Main.Car
         public void Setup()
         {
             AngularVelocity = _idleRpmHigh * RPM_TO_RADS; // TODO: wyjebac pozniej
-            _isRunning = false;
+            IsRunning = false;
         }
 
         public float GetTorque(float throttlePositionNormalized)
@@ -48,15 +48,15 @@ namespace Main.Car
 
         public void Ignite()
         {
-            if (_isRunning)
+            if (IsRunning)
             {
-                _isRunning = false;
+                IsRunning = false;
                 OnEngineStopped?.Invoke();
             }
             else
             {
-                AngularVelocity = _idleRpmHigh * RPM_TO_RADS; //setting the engine rpm to idle rpm
-                _isRunning = true;
+                AngularVelocity = _idleRpmHigh * RPM_TO_RADS; // setting the engine rpm to idle rpm
+                IsRunning = true;
                 OnEngineStarted?.Invoke();
             }
         }
@@ -67,14 +67,14 @@ namespace Main.Car
             
             _localThrottle = throttleInput;
             
-            if (_isRunning)
+            if (IsRunning)
             {
                 _localThrottle += Mathf.InverseLerp(_idleRpmHigh, _idleRpmLow, rpm);
                 _localThrottle = Mathf.Clamp01(_localThrottle);
 
                 if (rpm < _stallRpm)
                 {
-                    _isRunning = false;
+                    IsRunning = false;
                     OnEngineStopped?.Invoke();
                 }
             }

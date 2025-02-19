@@ -1,10 +1,11 @@
+using System;
 using UnityEngine;
 using UtilsToolbox.PropertyAttributes;
 
 namespace Main.Car
 {
     [System.Serializable]
-    public class Blinker
+    public class CarBlinker
     {
         public enum Side
         {
@@ -18,6 +19,8 @@ namespace Main.Car
 
         private float _blinkingTimer;
         private const float BLINKING_INTERVAL = 0.321f;
+
+        public event Action<bool> OnBlink;
 
         public void OnInteracted(Side side)
         {
@@ -46,6 +49,7 @@ namespace Main.Car
             _blinkingTimer += Time.deltaTime;
             if (_blinkingTimer >= BLINKING_INTERVAL)
             {
+                OnBlink?.Invoke(IsLit);
                 IsLit = !IsLit;
                 _blinkingTimer = 0;
             }
