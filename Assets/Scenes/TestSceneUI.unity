@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028326, g: 0.22571333, b: 0.30692202, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -266,7 +266,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _trackedRigibody: {fileID: 255893076}
-  _pointOffset: {x: -0.35, y: 1.07, z: -0.29}
+  _pointOffset: {x: -0.35, y: 1.12, z: -0.29}
   _eulerAnglesRotationOffset: {x: 0, y: 0, z: 0}
   _positionLerpSpeed: 60
   _rotationLerpSpeed: 10
@@ -718,6 +718,7 @@ GameObject:
   - component: {fileID: 255893075}
   - component: {fileID: 255893074}
   - component: {fileID: 255893076}
+  - component: {fileID: 255893077}
   m_Layer: 7
   m_Name: Car
   m_TagString: Untagged
@@ -850,8 +851,8 @@ MonoBehaviour:
     _isAutomaticClutch: 0
     _automaticClutchMinAngularVelocity: 100
     _automaticClutchMaxAngularVelocity: 300
-    _clutchMaxTorque: 100
-    _clutchTorqueSlipMultiplier: 0.13
+    _clutchMaxTorque: 300
+    _clutchTorqueSlipMultiplier: 0.25
     _forwardGearRatios:
     - 3.308
     - 1.962
@@ -866,25 +867,25 @@ MonoBehaviour:
   _carSuspensions:
   - <SpringRate>k__BackingField: 50000
     <SpringDamping>k__BackingField: 2500
-    <SpringHeight>k__BackingField: 0.4
+    <SpringHeight>k__BackingField: 0.55
     <SpringLength>k__BackingField: 0.8
     <ToeInAngle>k__BackingField: 0
     <CasterAngle>k__BackingField: 0
   - <SpringRate>k__BackingField: 50000
     <SpringDamping>k__BackingField: 2500
-    <SpringHeight>k__BackingField: 0.4
+    <SpringHeight>k__BackingField: 0.55
     <SpringLength>k__BackingField: 0.8
     <ToeInAngle>k__BackingField: 0
     <CasterAngle>k__BackingField: 0
   - <SpringRate>k__BackingField: 30000
     <SpringDamping>k__BackingField: 2500
-    <SpringHeight>k__BackingField: 0.4
+    <SpringHeight>k__BackingField: 0.52
     <SpringLength>k__BackingField: 0.8
     <ToeInAngle>k__BackingField: 0
     <CasterAngle>k__BackingField: 0
   - <SpringRate>k__BackingField: 30000
     <SpringDamping>k__BackingField: 2500
-    <SpringHeight>k__BackingField: 0.4
+    <SpringHeight>k__BackingField: 0.52
     <SpringLength>k__BackingField: 0.8
     <ToeInAngle>k__BackingField: 0
     <CasterAngle>k__BackingField: 0
@@ -946,6 +947,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 269434857}
   - {fileID: 1369056922}
   - {fileID: 5993330221471922932}
   - {fileID: 536230514}
@@ -966,7 +968,7 @@ Rigidbody:
   m_Mass: 1000
   m_Drag: 0
   m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0.7, z: 0.54}
+  m_CenterOfMass: {x: 0, y: 0.5, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
@@ -982,6 +984,61 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &255893077
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 255893073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b37fea9ddc164e049ae999494c0e46b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  carController: {fileID: 255893074}
+  _iconTurnLightLeft: {fileID: 4221597188217078816}
+  _iconTurnLightRight: {fileID: 6936682711031062961}
+  _iconTurnHandbrake: {fileID: 2842377668081348383}
+  _dialSpeed:
+    DialTransform: {fileID: 8553124721020741106}
+    originalValueRange: {x: 0, y: 220}
+    transformRotationRangeY: {x: -109, y: 109}
+  _dialRpm:
+    DialTransform: {fileID: 9125294275655202137}
+    originalValueRange: {x: 0, y: 6000}
+    transformRotationRangeY: {x: -107.77, y: 78}
+--- !u!1 &269434856
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 269434857}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &269434857
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 269434856}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.5, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 255893075}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &288492105
 GameObject:
   m_ObjectHideFlags: 0
@@ -4652,7 +4709,7 @@ Transform:
   m_GameObject: {fileID: 4163779626114822573}
   serializedVersion: 2
   m_LocalRotation: {x: 0.00000008940697, y: 0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.000000059604645, y: 0.00046485662, z: -0.000000059604645}
+  m_LocalPosition: {x: 0, y: 0.00046485662, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5419,7 +5476,7 @@ Transform:
   m_GameObject: {fileID: 8578938741329082351}
   serializedVersion: 2
   m_LocalRotation: {x: 0.00000008940697, y: 0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.000000059604645, y: 0.00046485662, z: -0.000000059604645}
+  m_LocalPosition: {x: 0, y: 0.00046485662, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5790,9 +5847,9 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -6619855343656302340, guid: cc41502b6bc034618a972efb301fac89, type: 3}
-  - {fileID: 170950735782079886, guid: cc41502b6bc034618a972efb301fac89, type: 3}
-  - {fileID: -2618135065210422271, guid: cc41502b6bc034618a972efb301fac89, type: 3}
+  - {fileID: 2100000, guid: 3cf47ed246d5a4341a2f626e27434b3d, type: 2}
+  - {fileID: 2100000, guid: 3cf47ed246d5a4341a2f626e27434b3d, type: 2}
+  - {fileID: 2100000, guid: 388eeb2dd4a4ccc4f81fbf6eafa27dbd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6447,7 +6504,7 @@ Transform:
   m_GameObject: {fileID: 6537110592947404964}
   serializedVersion: 2
   m_LocalRotation: {x: 0.00000008940697, y: 0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.000000059604645, y: 0.00046485662, z: -0.000000059604645}
+  m_LocalPosition: {x: 0, y: 0.00046485662, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6590,7 +6647,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -262721896975321841, guid: cc41502b6bc034618a972efb301fac89, type: 3}
+  - {fileID: 2100000, guid: c34892f071132ff42967397a23f878c9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7130,12 +7187,12 @@ Transform:
   - {fileID: 7903661980351549693}
   - {fileID: 9125294275655202137}
   - {fileID: 8553124721020741106}
-  - {fileID: 8725889777418941942}
-  - {fileID: 8920401778259557822}
-  - {fileID: 776319989686417277}
   - {fileID: 1191887158137370855}
   - {fileID: 2764303479926155130}
   - {fileID: 109962179632462916}
+  - {fileID: 8725889777418941942}
+  - {fileID: 8920401778259557822}
+  - {fileID: 776319989686417277}
   m_Father: {fileID: 3750447742713343028}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &3579774147459418858
@@ -7242,7 +7299,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -2618135065210422271, guid: cc41502b6bc034618a972efb301fac89, type: 3}
+  - {fileID: 2100000, guid: 6836d35f6e24ad74fb250893cbb7e986, type: 2}
   - {fileID: -6619855343656302340, guid: cc41502b6bc034618a972efb301fac89, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -7390,7 +7447,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -262721896975321841, guid: cc41502b6bc034618a972efb301fac89, type: 3}
+  - {fileID: 2100000, guid: c34892f071132ff42967397a23f878c9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7596,7 +7653,7 @@ GameObject:
   - component: {fileID: 222385806116686271}
   - component: {fileID: 2842377668081348383}
   m_Layer: 0
-  m_Name: cinc_interior_dashboard_lights.004
+  m_Name: cinc_interior_dashboard_lights_handbrake
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7673,7 +7730,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -262721896975321841, guid: cc41502b6bc034618a972efb301fac89, type: 3}
+  - {fileID: 2100000, guid: c34892f071132ff42967397a23f878c9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9043,7 +9100,7 @@ GameObject:
   - component: {fileID: 1764761813746481486}
   - component: {fileID: 6936682711031062961}
   m_Layer: 0
-  m_Name: cinc_interior_dashboard_lights.003
+  m_Name: cinc_interior_dashboard_lights_blinkerRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9223,7 +9280,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -262721896975321841, guid: cc41502b6bc034618a972efb301fac89, type: 3}
+  - {fileID: 2100000, guid: c34892f071132ff42967397a23f878c9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9307,7 +9364,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -262721896975321841, guid: cc41502b6bc034618a972efb301fac89, type: 3}
+  - {fileID: 2100000, guid: c34892f071132ff42967397a23f878c9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9850,9 +9907,9 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -6619855343656302340, guid: cc41502b6bc034618a972efb301fac89, type: 3}
-  - {fileID: 170950735782079886, guid: cc41502b6bc034618a972efb301fac89, type: 3}
-  - {fileID: -2618135065210422271, guid: cc41502b6bc034618a972efb301fac89, type: 3}
+  - {fileID: 2100000, guid: 3cf47ed246d5a4341a2f626e27434b3d, type: 2}
+  - {fileID: 2100000, guid: 3cf47ed246d5a4341a2f626e27434b3d, type: 2}
+  - {fileID: 2100000, guid: 388eeb2dd4a4ccc4f81fbf6eafa27dbd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9917,9 +9974,9 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -6619855343656302340, guid: cc41502b6bc034618a972efb301fac89, type: 3}
-  - {fileID: 170950735782079886, guid: cc41502b6bc034618a972efb301fac89, type: 3}
-  - {fileID: -2618135065210422271, guid: cc41502b6bc034618a972efb301fac89, type: 3}
+  - {fileID: 2100000, guid: 3cf47ed246d5a4341a2f626e27434b3d, type: 2}
+  - {fileID: 2100000, guid: 3cf47ed246d5a4341a2f626e27434b3d, type: 2}
+  - {fileID: 2100000, guid: 388eeb2dd4a4ccc4f81fbf6eafa27dbd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -10443,9 +10500,9 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -6619855343656302340, guid: cc41502b6bc034618a972efb301fac89, type: 3}
-  - {fileID: 170950735782079886, guid: cc41502b6bc034618a972efb301fac89, type: 3}
-  - {fileID: -2618135065210422271, guid: cc41502b6bc034618a972efb301fac89, type: 3}
+  - {fileID: 2100000, guid: 3cf47ed246d5a4341a2f626e27434b3d, type: 2}
+  - {fileID: 2100000, guid: 3cf47ed246d5a4341a2f626e27434b3d, type: 2}
+  - {fileID: 2100000, guid: 388eeb2dd4a4ccc4f81fbf6eafa27dbd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -10577,7 +10634,7 @@ GameObject:
   - component: {fileID: 1962249212479867304}
   - component: {fileID: 4221597188217078816}
   m_Layer: 0
-  m_Name: cinc_interior_dashboard_lights.002
+  m_Name: cinc_interior_dashboard_lights_blinkerLeft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10974,7 +11031,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2788142934956645596}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.00000008940697, y: 0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.05004698, y: -0.00009343028, z: -0.015247598}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
