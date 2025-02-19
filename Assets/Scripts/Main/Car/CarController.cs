@@ -9,6 +9,7 @@ namespace Main.Car
         [SerializeField] private CarTransmission _carTransmission;
         [SerializeField] private CarSuspension[] _carSuspensions;
         [SerializeField] private CarWheel[] _carWheels;
+        [SerializeField] private CarBlinker[] _carBlinkers;
 
         [Header("Aerodynamics")] 
         [SerializeField] private float _airDragCoefficient = 0.33f;
@@ -23,6 +24,7 @@ namespace Main.Car
         [SerializeField] private Rigidbody _rb;
         [SerializeField] private CarInput _carInput;
         [SerializeField] private CarEngineAudioPlayer _carEngineAudioPlayer;
+        [SerializeField] private CarBlinkerAudioPlayer _carBlinkerAudioPlayer;
         
 #if UNITY_EDITOR
         private void Reset()
@@ -42,17 +44,31 @@ namespace Main.Car
         private void OnEnable()
         {
             _carInput.OnIgnitionInputDetected += _carEngine.Ignite;
+            _carInput.OnGearSelected += _carTransmission.SetGear;
+
             _carEngine.OnEngineStarted += _carEngineAudioPlayer.Play;
             _carEngine.OnEngineStopped += _carEngineAudioPlayer.Stop;
-            _carInput.OnGearSelected += _carTransmission.SetGear;
+
+            foreach (CarBlinker blinker in _carBlinkers)
+            {
+                _carInput.OnBlinkerInteracted += blinker.OnInteracted;
+                blinker.OnBlink += _carBlinkerAudioPlayer.PlaySound;
+            }
         }
 
         private void OnDisable()
         {
             _carInput.OnIgnitionInputDetected -= _carEngine.Ignite;
+            _carInput.OnGearSelected -= _carTransmission.SetGear;
+
             _carEngine.OnEngineStarted -= _carEngineAudioPlayer.Play;
             _carEngine.OnEngineStopped -= _carEngineAudioPlayer.Stop;
-            _carInput.OnGearSelected -= _carTransmission.SetGear;
+            
+            foreach (CarBlinker blinker in _carBlinkers)
+            {
+                _carInput.OnBlinkerInteracted -= blinker.OnInteracted;
+                blinker.OnBlink -= _carBlinkerAudioPlayer.PlaySound;
+            }
         }
 
         private void Start()
@@ -100,6 +116,11 @@ namespace Main.Car
 
             ApplyAerodynamics();
         }
+        
+        private void Update()
+        {
+            UpdateBlinkers();
+        }
 
         private void SetupAllSuspensions()
         {
@@ -111,12 +132,20 @@ namespace Main.Car
 
         private void UpdateAllWheels(float engineToWheelsTorque)
         {
-            float targetSteeringAngle = _maxSteeringAngle * _carInput.HorizontalInput;
+            float targetSteeringAngle = _maxSteeringAngle * _carInput.SteeringWheelInput;
             float brakingTorque = _maxBrakingTorque * _carInput.BrakeInput;
             
             for (int i = 0, c = _carWheels.Length; i < c; i++)
             {
                 _carWheels[i].Update(_rb, _carSuspensions[i], targetSteeringAngle, engineToWheelsTorque, brakingTorque);
+            }
+        }
+
+        private void UpdateBlinkers()
+        {
+            foreach (CarBlinker blinker in _carBlinkers)
+            {
+                blinker.Update();
             }
         }
 
@@ -151,24 +180,19 @@ namespace Main.Car
             float currentDragArea = Mathf.Lerp(_airDragSagittalArea, _airDragFrontalArea,
                 Mathf.Abs(Vector3.Dot(transform.forward, velocity.normalized)));
 
-            Vector3 airDragForce = 0.5f * _airDragCoefficient * currentDragArea * 1.2f * velocity * velocity.magnitude;
+            Vector3 airDragForce = velocity * (0.5f * _airDragCoefficient * currentDragArea * 1.2f * velocity.magnitude);
             
             _rb.AddForce(-airDragForce);
         }
 
-        public float GetSpeed()
-        {
-            return _rb.velocity.magnitude * 3.6f;
-        }
+        public float GetSpeed() => _carEngine.IsRunning ? _rb.velocity.magnitude * 3.6f : 0;
 
-        public float GetEngineRpm()
-        {
-            return _carEngine.GetRpm();
-        }
+        public float GetEngineRpm() => _carEngine.IsRunning ? _carEngine.GetRpm() : 0;
 
-        public int GetCurrentGear()
-        {
-            return _carTransmission.CurrentGear;
-        }
+        public int GetCurrentGear() => _carTransmission.CurrentGear;
+
+        public CarBlinker GetBlinker(CarBlinker.Side side) => _carBlinkers[(int) side];
+
+        public CarEngine GetEngine() => _carEngine;
     }
 }

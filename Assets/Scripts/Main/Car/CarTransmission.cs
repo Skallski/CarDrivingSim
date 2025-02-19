@@ -118,7 +118,7 @@ namespace Main.Car
             }
 
             float gearRatio = GetGearRatio(CurrentGear);
-            Debug.Log("Gear ratio = " + gearRatio);
+            // Debug.Log("Gear ratio = " + gearRatio);
 
             float gearRationInverse = GetGearRatioInverse(CurrentGear);
 
