@@ -7,32 +7,11 @@ namespace Main.UI
 {
     public class HudController : MonoBehaviour
     {
-        [SerializeField] private MultiSwitch _digitalElementsSwitch;
+        [SerializeField] private CarController _carController;
+        [Space]
         [SerializeField] private TextMeshProUGUI _speedLabel;
         [SerializeField] private TextMeshProUGUI _rpmLabel;
         [SerializeField] private MultiSwitch _gearSwitch;
-        [SerializeField] private MultiSwitch _leftBlinkerSwitch;
-        [SerializeField] private MultiSwitch _rightBlinkerSwitch;
-        
-        [Space]
-        [SerializeField] private CarController _carController;
-
-        private void OnEnable()
-        {
-            _carController.GetEngine().OnEngineStarted += OnEngineStarted;
-            _carController.GetEngine().OnEngineStopped += OnEngineStopped;
-        }
-
-        private void OnDisable()
-        {
-            _carController.GetEngine().OnEngineStarted -= OnEngineStarted;
-            _carController.GetEngine().OnEngineStopped -= OnEngineStopped;
-        }
-
-        private void Start()
-        {
-            _digitalElementsSwitch.SetState(false);
-        }
 
         private void Update()
         {
@@ -54,41 +33,6 @@ namespace Main.UI
                     _gearSwitch.SetState(newState);
                 }
             }
-
-            UpdateBlinkers();
-        }
-
-        private void UpdateBlinkers()
-        {
-            if (_leftBlinkerSwitch == null || _rightBlinkerSwitch == null)
-            {
-                return;
-            }
-            
-            UpdateSingleBlinker(_carController.GetBlinker(CarBlinker.Side.Left), ref _leftBlinkerSwitch);
-            UpdateSingleBlinker(_carController.GetBlinker(CarBlinker.Side.Right), ref _rightBlinkerSwitch);
-
-            void UpdateSingleBlinker(CarBlinker blinker, ref MultiSwitch carBlinkerSwitch)
-            {
-                if (blinker.IsOn)
-                {
-                    carBlinkerSwitch.SetState(blinker.IsLit);
-                }
-                else
-                {
-                    carBlinkerSwitch.SetState(false);
-                }
-            }
-        }
-        
-        private void OnEngineStarted()
-        {
-            _digitalElementsSwitch.SetState(true);
-        }
-        
-        private void OnEngineStopped()
-        {
-            _digitalElementsSwitch.SetState(false);
         }
     }
 }
