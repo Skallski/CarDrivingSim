@@ -623,8 +623,8 @@ GameObject:
   m_Component:
   - component: {fileID: 255893075}
   - component: {fileID: 255893074}
-  - component: {fileID: 255893076}
   - component: {fileID: 255893077}
+  - component: {fileID: 255893076}
   m_Layer: 7
   m_Name: Car
   m_TagString: Untagged
@@ -824,13 +824,6 @@ MonoBehaviour:
     <MovingPartTransform>k__BackingField: {fileID: 2593153707884449501}
     <StaticPartTransform>k__BackingField: {fileID: 166535669}
     <AngularVelocity>k__BackingField: 0
-  _carBlinkers:
-  - _side: 0
-    <IsOn>k__BackingField: 0
-    <IsLit>k__BackingField: 0
-  - _side: 1
-    <IsOn>k__BackingField: 0
-    <IsLit>k__BackingField: 0
   _airDragCoefficient: 0.33
   _airDragFrontalArea: 1.9
   _airDragSagittalArea: 3.5
@@ -839,7 +832,6 @@ MonoBehaviour:
   _rb: {fileID: 255893076}
   _carInput: {fileID: 1310840778}
   _carEngineAudioPlayer: {fileID: 37146385}
-  _carBlinkerAudioPlayer: {fileID: 2046324041}
 --- !u!4 &255893075
 Transform:
   m_ObjectHideFlags: 0
@@ -899,7 +891,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b37fea9ddc164e049ae999494c0e46b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _carInput: {fileID: 1310840778}
   _carController: {fileID: 255893074}
+  _leftBlinker:
+    _side: 0
+    <IsOn>k__BackingField: 0
+    <IsLit>k__BackingField: 0
+  _rightBlinker:
+    _side: 1
+    <IsOn>k__BackingField: 0
+    <IsLit>k__BackingField: 0
+  _carBlinkerAudioPlayer: {fileID: 2046324041}
   _iconTurnLightLeft: {fileID: 4221597188217078816}
   _iconTurnLightRight: {fileID: 6936682711031062961}
   _iconTurnHandbrake: {fileID: 2842377668081348383}
