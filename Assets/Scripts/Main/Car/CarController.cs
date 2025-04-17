@@ -158,6 +158,8 @@ namespace Main.Car
             _rb.AddForce(-airDragForce);
         }
 
+        public bool IsEngineIgnited() => _carEngine.IsRunning;
+
         public float GetSpeed() => _carEngine.IsRunning ? _rb.velocity.magnitude * 3.6f : 0;
 
         public float GetEngineRpm() => _carEngine.IsRunning ? _carEngine.GetRpm() : 0;
