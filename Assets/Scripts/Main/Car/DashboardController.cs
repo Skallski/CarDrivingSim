@@ -82,6 +82,7 @@ namespace Main.Car
 
         private static void SetDialRotation(DialRemap dial, float value)
         {
+            value = Mathf.Clamp(value, dial.OriginalValueRange.x, dial.OriginalValueRange.y*1.25f);
             dial.DialTransform.localRotation = Quaternion.Euler(0,
                 Remap(value, dial.OriginalValueRange.x, dial.OriginalValueRange.y, dial.TransformRotationRangeY.x,
                     dial.TransformRotationRangeY.y), 0);

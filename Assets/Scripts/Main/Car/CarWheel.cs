@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UtilsToolbox.PropertyAttributes;
 
@@ -22,6 +23,15 @@ namespace Main.Car
         private const float LONGITUDAL_FRICTION_MULTIPLIER = 0.2f;
         private const float LATERAL_FRICTION_MULTIPLIER = 0.5f;
         private const float BRAKING_STABILITY_MULTIPLIER = 0.08f;
+
+        private float _longitudalSlipIntegral = 0;
+        private float _lateralSlipIntegral = 0;
+        private Vector3 _velocityInNormalPlane;
+
+        private Vector3 _contactPosition;
+
+        private bool _isGroundedLast;
+        
 
         public void Update(Rigidbody carRb, CarSuspension carSuspension, float targetSteeringAngle, float engineTorque, float brakingTorque)
         {
@@ -66,6 +76,9 @@ namespace Main.Car
                 // slip and friction
                 Vector3 forwardForceDirection = Vector3.Cross(StaticPartTransform.right, hit.normal);
                 Vector3 sideForceDirection = Vector3.Cross(-StaticPartTransform.forward, hit.normal);
+                
+                Vector3 carFrontDirection = Vector3.Cross(carRb.transform.right, hit.normal);
+                Vector3 carSideDirection = Vector3.Cross(-carRb.transform.forward, hit.normal);
                 // Debug.DrawRay(hit.point, forwardForceDirection, Color.magenta, 0, false);
                 // Debug.DrawRay(hit.point, sideForceDirection, Color.cyan, 0, false);
                 
@@ -77,6 +90,32 @@ namespace Main.Car
                 float longitudalSlipClamped = Mathf.Clamp(longitudalSlip * LONGITUDAL_FRICTION_MULTIPLIER, -1, 1);
                 float lateralSlipClamped = Mathf.Clamp(lateralSlip * LATERAL_FRICTION_MULTIPLIER, -1, 1);
                 
+                float staticFrictionTransition = Mathf.Clamp01(1.2f - (worldWheelVelocity.sqrMagnitude - Mathf.Abs(wheelRollingVelocity))*0.5f)*(brakingTorque*0.001f);
+                if (_isGroundedLast==false)
+                {
+                    _contactPosition = hit.point;
+                }
+                Vector3 staticFrictionDistance = _contactPosition - hit.point;
+                if (staticFrictionTransition > 0)
+                {
+                    _velocityInNormalPlane = Vector3.ProjectOnPlane(worldWheelVelocity,hit.normal);
+
+                    _longitudalSlipIntegral += Vector3.Dot(-worldWheelVelocity, carFrontDirection) * Time.deltaTime * 2f * staticFrictionTransition;
+                    _lateralSlipIntegral += Vector3.Dot(-worldWheelVelocity, carSideDirection) * Time.deltaTime * 2f * staticFrictionTransition;
+
+                    const float intergralLimit = 1f;
+                    
+                    _longitudalSlipIntegral = Mathf.Clamp(_longitudalSlipIntegral, -intergralLimit*staticFrictionTransition, intergralLimit*staticFrictionTransition);
+                    _lateralSlipIntegral = Mathf.Clamp(_lateralSlipIntegral, -intergralLimit*staticFrictionTransition, intergralLimit*staticFrictionTransition);
+                }
+                else
+                {
+                    _longitudalSlipIntegral = 0;
+                    _lateralSlipIntegral = 0;
+                        
+                    _contactPosition = hit.point;
+                }
+                
                 float frictionLimiter = 1f;
                 Vector2 slipVector = new Vector2(longitudalSlipClamped, lateralSlipClamped);
                 if (slipVector.sqrMagnitude > 1)
@@ -84,7 +123,13 @@ namespace Main.Car
                     frictionLimiter = 1f / slipVector.magnitude;
                 }
                 
-                Vector3 frictionForce = longitudalSlipClamped * forwardForceDirection + lateralSlipClamped * sideForceDirection;
+                Vector3 frictionForce = (longitudalSlipClamped) * forwardForceDirection + (lateralSlipClamped) * sideForceDirection;
+                if (staticFrictionTransition>0)
+                {
+                    frictionForce += (_longitudalSlipIntegral) * carFrontDirection + (_lateralSlipIntegral) * carSideDirection; //static friction during braking (for stopping on ramps)
+                    frictionForce -= _velocityInNormalPlane * staticFrictionTransition*0.25f; //damping the bounce from static friction
+                }
+                
                 
                 carRb.AddForceAtPosition(
                     frictionForce * (frictionLimiter * (springCompression * carSuspension.SpringRate)), hit.point);
@@ -97,11 +142,15 @@ namespace Main.Car
                 AngularVelocity += (AngularVelocity - angularVelocityLast) * -0.6f;
 
                 angularVelocityLast = AngularVelocity;
+
+                _isGroundedLast = true;
             }
             else
             {
                 carSuspension.SpringCompressionLastFrame = 0;
                 StaticPartTransform.position = raycastWorldPos + raycastWorldDir * (carSuspension.SpringLength - Radius);
+
+                _isGroundedLast = false;
             }
 
             // spinning wheel simulation
